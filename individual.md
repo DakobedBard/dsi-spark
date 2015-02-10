@@ -110,11 +110,24 @@ the cloud.
 Here we are trying to find out which airport has the worst / least delay. There are 2 types of delays:
 arrival delays (`ARR_DELAY`) and departure delays (`DEP_DELAY`). All delays are in terms of minutes.
 
-1. Just as above define your spark context to be `local[4]`. Load the text file in via an S3 link 
+1. Just as above, define your `SparkContext` to be `local[4]`. Load the text file in via an S3 link 
    to the file. 
 
    ```python
    airline = sc.textFile('s3n://mortar-example-data/airline-data')
    ```
 
-2. 
+2. Show the first 2 entries. The first line is the column names and starting from the second line is 
+   the corresponding data. Also run a `.count()` on the RDD. This will **take a while** as the data set is
+   a few million rows.
+
+3. Let's do some preprocessing. Remove the `'`, `"` and the trailing `,` for each line. Show the first 2 lines
+   to confirm. The first 2 lines should look like the following.
+   
+   ```
+   YEAR,MONTH,UNIQUE_CARRIER,ORIGIN_AIRPORT_ID,DEST_AIRPORT_ID,DEP_DELAY,DEP_DELAY_NEW,ARR_DELAY,ARR_DELAY_NEW,CANCELLED
+   2012,4,AA,12478,12892,-4.00,0.00,-21.00,0.00,0.00
+   ```
+   
+4.
+ 
