@@ -29,7 +29,25 @@ applicable to Spark and PySpark. Complete the following tutorial in
    file_rdd = sc.textFile('data/toy_data.txt')
    ```
 
-3. first collect take 
+3. Now we have an RDD, we need to see what is inside. RDD by default will load data in
+   partition. Therefore at creation of the RDD, the data is not completely loaded onto
+   the memory. This way you are able to quickly check out the first few entries of the RDD
+   of a potentially enormous data set.
+    
+   ```python
+   file_rdd.first() # Views the first entry
+   file_rdd.take(2) # Views the first two entries
+   ```
+    
+   If you would like to have everything in a Python list, you would have to access every
+   partition of the RDD and this could take a long time. Before you execute the following 
+   command, be aware of how many entries you are pulling. It is completely fine for this 
+   toy data set.
+   
+   ```python
+   file_rdd.collect()
+   lst_rdd.collect()
+   ```
 
 
 
