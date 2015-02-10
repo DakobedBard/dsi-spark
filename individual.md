@@ -68,7 +68,11 @@ and **Functional Programming**.
 
    Now we have dictionaries within RDD which we can work with.
 
-2. 
+2. The key of the dictionary is the name of the person and the key is how many chocolate chip 
+   cookies they have bought for the past month. Similiar to `map`, `filter` the entries in the 
+   `json_rdd` with more than 5 chocolate chip cookies.
+
+3. 
 
 ##2. Practical Operations with Spark
 
