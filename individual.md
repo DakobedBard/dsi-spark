@@ -77,7 +77,7 @@ and **Functional Programming**.
    Run a `.first()` to confirm your results.
    
    **Note: All your map functions are not run in the Spark backend when you execute it.
-   The map operations are run when a .first(), take() or .count() is called where the items
+   The map operations are run when a `.first()`, `.take()` or `.count()` is called where the items
    are needed. This is known as [lazy evaluation](http://en.wikipedia.org/wiki/Lazy_evaluation)**
 
 4. Now we are interested in calculating how much people purchased for their cookies. Use `mapByValue`
