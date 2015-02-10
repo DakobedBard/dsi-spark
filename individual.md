@@ -75,8 +75,15 @@ and **Functional Programming**.
 3. Most Spark built-in functions assumes each item in the RDD is a tuple of 2 `(key, value)`.
    Use `map` again on `json_rdd` to make each item a tuple, i.e. `(name, cookie bought)`. 
    Run a `.first()` to confirm your results.
+   
+   **Note that all your map functions are not run in the Spark backend when you execute it.
+   The map operations are run when a .first(), take() or .count() is called where the items
+   are needed. This is known as [lazy evaluation](http://en.wikipedia.org/wiki/Lazy_evaluation)**
 
-3. Now we are interested in calculating how much people purchased for their cookies. Use `map
+3. Now we are interested in calculating how much people purchased for their cookies. Use `mapByValue`
+   to return an RDD with tuples `(name, money purchased)`. Again run a `first()` to confirm.
+
+
 
 ##2. Practical Operations with Spark
 
