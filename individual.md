@@ -95,7 +95,10 @@ and **Functional Programming**.
    
 6. Same as mrjobs of the map-reduce framework, Spark is built on the same framework and can do
    reduce operations. Calculate the total amount of money from purchasing cookies from everyone.
-   Use `reduceByValue`.
+   Use `rdd.values()` to access all the values as an RDD and then do a `reduce` to get the sum.
+   This might seem to be a rather pointless exercise with a few entries in this toy dataset, but
+   the performance difference is huge on massive data sets.
+   
 
    
 ##2. Practical Operations with Spark
