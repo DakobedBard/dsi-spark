@@ -99,7 +99,6 @@ and **Functional Programming**.
    This might seem to be a rather pointless exercise with a few entries in this toy dataset, but
    the performance difference is huge on massive data sets.
    
-
    
 ##2. Practical Operations with Spark
 
@@ -108,6 +107,14 @@ dataset. This dataset is still not so huge that it will be impossible to process
 get to the real big ones tomorrow where we need to be running operations on cluster of machines in
 the cloud.
 
+Here we are trying to find out which airport has the worst / least delay. There are 2 types of delays:
+arrival delays (`ARR_DELAY`) and departure delays (`DEP_DELAY`). All delays are in terms of minutes.
 
+1. Just as above define your spark context to be `local[4]`. Load the text file in via an S3 link 
+   to the file. 
 
+   ```python
+   airline = sc.textFile('s3n://mortar-example-data/airline-data')
+   ```
 
+2. 
