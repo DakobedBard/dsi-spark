@@ -87,7 +87,7 @@ and **Functional Programming**.
 
    **Note: In general, when you are doing functional programming with Spark, keep the function of 
    each of your map operation small. Spark will be able to distribute resources and parallelize 
-   more efficiently **
+   more efficiently**
    
 6. Same as mrjobs of the map-reduce framework, Spark is built on the same framework and can do
    reduce operations. Calculate the total amount of money from purchasing cookies from everyone.
