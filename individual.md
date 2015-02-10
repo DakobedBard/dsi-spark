@@ -1,7 +1,10 @@
-##Spark Basics
-
+##1. Intro to Spark
 PySpark is a Python wrapper around Spark, which is written in Scala. The following concepts are 
-applicable to Spark and PySpark. Complete the following tutorial in  
+applicable to Spark and PySpark. Complete the following tutorials in **Spark Basics** 
+and **Functional Programming**. 
+
+
+###1.1 Spark Basics
 
 1. Before you start using PySpark, you need a `SparkContext`. A `SparkContext` specifies where your
    cluster is, i.e. the resources for all your distributed computation. Specify your `SparkContext`
@@ -49,8 +52,11 @@ applicable to Spark and PySpark. Complete the following tutorial in
    lst_rdd.collect()
    ```
 
+###1.2 Functional Programming
 
+4. 
 
+##2. Practical Operations with Spark
 
 
 ##Power of Spark
