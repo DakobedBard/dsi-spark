@@ -26,7 +26,7 @@ applicable to Spark and PySpark. Complete the following tutorial in
    Read an RDD in from a text file. By default, the RDD will treat each line as an item.
    
    ```python
-   file_rdd = sc.textFile('
+   file_rdd = sc.textFile('data/toy_data.txt')
    ```
 
 3. first collect take 
