@@ -1,7 +1,7 @@
 ##1. Intro to Spark
 PySpark is a Python wrapper around Spark, which is written in Scala. The following concepts are 
 applicable to Spark and PySpark. Complete the following tutorials in **Spark Basics** 
-and **Functional Programming**. 
+and **Functional Programming**.  
 
 
 ###1.1 Spark Basics
@@ -72,7 +72,11 @@ and **Functional Programming**.
    cookies they have bought for the past month. Similiar to `map`, `filter` the entries in the 
    `json_rdd` with more than 5 chocolate chip cookies.
 
-3. 
+3. Most Spark built-in functions assumes each item in the RDD is a tuple of 2 `(key, value)`.
+   Use `map` again on `json_rdd` to make each item a tuple, i.e. `(name, cookie bought)`. 
+   Run a `.first()` to confirm your results.
+
+3. Now we are interested in calculating how much people purchased for their cookies. Use `map
 
 ##2. Practical Operations with Spark
 
