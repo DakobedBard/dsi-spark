@@ -103,5 +103,11 @@ and **Functional Programming**.
    
 ##2. Practical Operations with Spark
 
-Now we are familiar with using 
+Now we are familiar with the basics of Spark. Let's flex some of Spark's real power with a bigger
+dataset. This dataset is still not so huge that it will be impossible to process locally. We will
+get to the real big ones tomorrow where we need to be running operations on cluster of machines in
+the cloud.
+
+
+
 
