@@ -12,13 +12,14 @@ and **Functional Programming**.
    
    ```python
    import pyspark as ps
-   sc = ps.SparkContext('local[4]') # Used all 4 cores on your machine
+   sc = ps.SparkContext('local[4]') # Uses all 4 cores on your machine
    ```
 
-2. The fundamental programming abstraction in Spark is called Resilient Distributed Datasets (RDDs).
-   An RDD is a logical collection of data partitioned across machines. RDDs can be created by 
-   referencing datasets in external storage systems, or by applying coarse-grained transformations 
-   (e.g. map, filter, reduce, join) on existing RDDs.
+2. The fundamental programming abstraction in Spark is called **Resilient Distributed Datasets (RDDs)**.
+   **An RDD is a logical collection of data partitioned across machines**. This is where most of
+   Spark's power come from. Therefore, you would want to use RDDs whenever you are processing massive 
+   amounts of data. RDDs can be created by referencing datasets in external storage systems, or from Python
+   list objects.
    
    Create an RDD from a python list. 
    
