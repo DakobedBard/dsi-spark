@@ -55,7 +55,20 @@ and **Functional Programming**.
 
 ###1.2 Functional Programming
 
-4. 
+1. All operations in Spark are functional. In other words, you map functions to each item in 
+   your RDD. You will rarely need a for loop (`forEach()`) in Spark. 
+   
+   As it stands now, each line in `file_rdd` is a string object, below is an example of 
+   how to map a function to each line to turn the line into a dictionary.
+   
+   ```python
+   json_rdd = file_rdd.map(lambda line: json.loads(line))
+   json_rdd.first()
+   ```
+
+   Now we have dictionaries within RDD which we can work with.
+
+2. 
 
 ##2. Practical Operations with Spark
 
