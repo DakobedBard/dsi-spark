@@ -83,21 +83,18 @@ and **Functional Programming**.
 4. Now we are interested in calculating how much people purchased for their cookies. Use `mapByValue`
    to return an RDD with tuples `(name, money purchased)`. Again run a `first()` to confirm.
 
-5. Now we want the names to be lower-cased, use `mapByKey` to achieve that.
+5. Make the names lower-case, use `mapByKey` to achieve that.
 
    **Note: In general, when you are doing functional programming with Spark, keep the function of 
    each of your map operation small. Spark will be able to distribute resources and parallelize 
    more efficiently **
    
-6. 
+6. Same as mrjobs of the map-reduce framework, Spark is built on the same framework and can do
+   reduce operations. Calculate the total amount of money from purchasing cookies from everyone.
+   Use `reduceByValue`.
 
-
-
-
-
+   
 ##2. Practical Operations with Spark
 
+Now we are familiar with using 
 
-##Power of Spark
-
-The value of Spark is its ability to process data at a capacity that Python cannot. Here we are going 
