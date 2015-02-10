@@ -39,7 +39,7 @@ in the cloud. Please follow the below instructions in installing PySpark.
 ##Section 2: Setting up an AWS account
 
 Amazon will ask you for your credit card information during the setup process. You should select
-the free tier service so you do not have to pay anything.
+the free tier service so you do not have to pay anything that is more than $10.
 
 Go to [http://aws.amazon.com/](http://aws.amazon.com/) and sign up: 
 
