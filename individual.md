@@ -77,6 +77,7 @@ and **Functional Programming**.
    Run a `.first()` to confirm your results.
    
    **Note:**
+   
    **All your map functions are not run in the Spark backend when you execute it.
    The map operations are run when a `.first()`, `.take()` or `.count()` is called where the items
    are needed. This is known as [lazy evaluation](http://en.wikipedia.org/wiki/Lazy_evaluation)**
@@ -87,6 +88,7 @@ and **Functional Programming**.
 5. Make the names lower-case, use `mapByKey` to achieve that.
 
    **Note:**
+   
    **In general, when you are doing functional programming with Spark, keep the function of 
    each of your map operation small. Spark will be able to distribute resources and parallelize 
    more efficiently**
