@@ -103,12 +103,15 @@ and **Functional Programming**.
 ##2. Practical Operations with Spark
 
 Now we are familiar with the basics of Spark. Let's flex some of Spark's real power with a bigger
-dataset. This dataset is still not so huge that it will be impossible to process locally. We will
+dataset. Here we will run through the workflow of working with an actual dataset in Spark.
+This dataset is still not so huge that it will be impossible to process locally. We will
 get to the real big ones tomorrow where we need to be running operations on cluster of machines in
 the cloud.
 
 Here we are trying to find out which airport has the worst / least delay. There are 2 types of delays:
 arrival delays (`ARR_DELAY`) and departure delays (`DEP_DELAY`). All delays are in terms of minutes.
+`ARR_DELAY` is associated with the destination airport (`DEST_AIRPORT_ID`), and
+`DEP_DELAY` is associated with the destination airport (`ORIGIN_AIRPORT_ID`).
 
 1. Just as above, define your `SparkContext` to be `local[4]`. Load the text file in via an S3 link 
    to the file. 
@@ -128,6 +131,19 @@ arrival delays (`ARR_DELAY`) and departure delays (`DEP_DELAY`). All delays are 
    YEAR,MONTH,UNIQUE_CARRIER,ORIGIN_AIRPORT_ID,DEST_AIRPORT_ID,DEP_DELAY,DEP_DELAY_NEW,ARR_DELAY,ARR_DELAY_NEW,CANCELLED
    2012,4,AA,12478,12892,-4.00,0.00,-21.00,0.00,0.00
    ```
+  
+4. Use `filter` to filter out the line containing the column names. 
+
+
+5. Make a function that takes a line as an argument and return a dictionary where the keys are the column
+   names and the values are the values for the column. 
    
-4.
- 
+   - The output is a dictionary with only these columns:
+     `['DEST_AIRPORT_ID', 'ORIGIN_AIRPORT_ID', 'DEP_DELAY', 'ARR_DELAY']`
+   - Cast `DEP_DELAY` and `ARR_DELAY` as an integer. These are minutes that are delayed.
+   - Subtract `DEP_DELAY` from `ARR_DELAY` to get the actual `DEP_DELYAY`
+   - If a flight is `CANCELLED`, add 5 hours to `DEP_DELAY`
+   - There are missing values in `DEP_DELAY` and `ARR_DELAY` (i.e. `''`) and you would want
+     to replace those with `0`.
+     
+6.  
