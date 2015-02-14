@@ -104,20 +104,18 @@ The goal is to identify airports with the worst / least delay.
    the corresponding data. Also run a `.count()` on the RDD. This will **take a while** as the data set is
    a few million rows.
 
-3. Let's do some preprocessing. Remove the `'`, `"` and the trailing `,` for each line. Show the first 2 lines
+3. Let's do some preprocessing. Remove the `'`, `"` and the trailing `,` for each line. Print the first 2 lines
    to confirm. The first 2 lines should look like the following.
    
    ```
    YEAR,MONTH,UNIQUE_CARRIER,ORIGIN_AIRPORT_ID,DEST_AIRPORT_ID,DEP_DELAY,DEP_DELAY_NEW,ARR_DELAY,ARR_DELAY_NEW,CANCELLED
    2012,4,AA,12478,12892,-4.00,0.00,-21.00,0.00,0.00
    ```
-
-4. Run a count on the RDD. Notice the size of the data you are dealing with.
   
-5. Use `filter` to filter out the line containing the column names. 
+4. Use `filter` to filter out the line containing the column names. 
 
 
-6. Make a function, `make_rows()`, that takes a line as an argument and return a dictionary
+5. Make a function, `make_rows()`, that takes a line as an argument and return a dictionary
    where the keys are the column names and the values are the values for the column. 
    
    - The output is a dictionary with only these columns:
@@ -130,20 +128,20 @@ The goal is to identify airports with the worst / least delay.
      
    Map `make_rows()` to the RDD and you should have an RDD where each item is a dictionary.
    
-7. Instead of dictionaries, make 2 RDDs where the items are tuples.
+6. Instead of dictionaries, make 2 RDDs where the items are tuples.
    The first RDD will contain tuples `(DEST_AIRPORT_ID, ARR_DELAY)`. 
    The other RDD will contain `(ORIGIN_AIRPORT_ID, DEP_DELAY)`.
    Run a `.first()` or `.take()` to confirm your results.
 
-8. Make 2 RDDs for the mean delay time for origin airports and destination airports. You will need 
+7. Make 2 RDDs for the mean delay time for origin airports and destination airports. You will need 
    to `groupByKey()` and then take the mean of the delay times for the particular airport. 
    Use the PySpark [docs](http://spark.apache.org/docs/latest/api/python/pyspark.html#module-pyspark).
 
-9. Run `rdd.persist()` on the RDDs you made in in `8.`. That will cache the RDDs so they do not
+8. Run `rdd.persist()` on the RDDs you made in in `8.`. That will cache the RDDs so they do not
    need to be reproduced every time they are called upon. Use `persist()` for RDDs that you are 
    going to repeatedly use.
 
-10. Sort the RDDs by the mean delay time to answer the following questions.
+9. Sort the RDDs by the mean delay time to answer the following questions.
 
     - Top 10 departing airport that has least avgerage delay in minutes
     - Top 10 departing airport that has most avgerage delay in minutes
