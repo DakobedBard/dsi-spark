@@ -53,15 +53,17 @@ Spark operations conforms to the functional programming paradigm. Objects (RDDs)
 and mapping a function to an RDD returns another RDD. A lot of Spark's functionalities assume the 
 items in an RDD to be tuples of `(key, value)`. Structure your RDDs to be `(key, value)` whenever possible.
 
+Also beware of [**lazy evaluation**](http://en.wikipedia.org/wiki/Lazy_evaluation) where operations
+are not executed until a `.first()`, `.take()` or `.count()` is call to retrieve items in the RDD.
+
 1. Turn the items in `file_rdd` into `(key, value)` pairs. Map each item into a json object and then map to
-   the `(key, value)` pairs. **Remember to cast value as type** `int`.
+   the `(key, value)` pairs. **Remember to cast value as type** `int`. 
    
    - **The key is the name of the person**
    - **The value is how many chocolate chip cookies bought**
 
     
-2. Filter Similiar to `map`, `filter` the entries in the 
-   `json_rdd` with more than 5 chocolate chip cookies.
+2. Similiar to `map`, `filter` for entries with more than 5 chocolate chip cookies.
 
 3. Most Spark built-in functions assumes each item in the RDD is a tuple of 2 `(key, value)`.
    Use `map` again on `json_rdd` to make each item a tuple, i.e. `(name, cookie bought)`. 
@@ -70,8 +72,8 @@ items in an RDD to be tuples of `(key, value)`. Structure your RDDs to be `(key,
    **Note:**
    
    **All your map functions are not run in the Spark backend when you execute it.
-   The map operations are run when a `.first()`, `.take()` or `.count()` is called where the items
-   are needed. This is known as [lazy evaluation](http://en.wikipedia.org/wiki/Lazy_evaluation)**
+   The map operations are run when a  is called where the items
+   are needed. This is known as **
 
 4. Now we are interested in calculating how much people purchased for their cookies. Use `mapByValue`
    to return an RDD with tuples `(name, money purchased)`. Again run a `first()` to confirm.
