@@ -1,5 +1,7 @@
 ###1. RDD and Spark Basics
 
+Here we will be using **PySpark**, but the concepts are transferrable to Spark in Scala.
+
 1. Initiate a `SparkContext`. A `SparkContext` specifies where your
    cluster is, i.e. the resources for all your distributed computation. Specify your `SparkContext`
    as follows.
@@ -10,10 +12,10 @@
    sc = ps.SparkContext('local[4]') 
    ```
 
-2. The fundamental programming abstraction in Spark is called **Resilient Distributed Datasets (RDDs)**.
-   **An RDD is a logical collection of data partitioned across machines**. This is where most of
-   Spark's power come from. Therefore, you would want to use RDDs whenever you are processing massive 
-   amounts of data. RDDs can be created by referencing datasets in external storage systems, or from Python
+2. Operations in Spark uses **Resilient Distributed Datasets (RDDs)**.
+   **An RDD is a collection of data partitioned across machines**. 
+   Using RDDs allow the processing of your data to be parallelized due to the partitions.
+   RDDs can be created by referencing datasets in external storage systems, or from Python
    list objects.
    
    Create an RDD from a python list. 
@@ -30,16 +32,16 @@
 
 3. Now we have an RDD, we need to see what is inside. RDD by default will load data in
    partition. Therefore at creation of the RDD, the data is not completely loaded onto
-   the memory. This way you are able to quickly check out the first few entries of the RDD
-   of a potentially enormous data set.
+   the memory. You can quickly check out the first few entries of the RDD
+   of a potentially enormous data set without accessing all the partitions.
     
    ```python
    file_rdd.first() # Views the first entry
    file_rdd.take(2) # Views the first two entries
    ```
     
-4. To retrieve items in your RDD into a Python list, you would have to access every
-   partition of the RDD and this could take a long time. Before you execute the following 
+4. To retrieve all items in your RDD into a Python list, every partition in the RDD has to
+   accessed and this could take a long time. In general, before you execute the following 
    command, be aware of how many entries you are pulling. Usually you pool the results 
    (of reasonable size) into a Python list after all the big data operations are done in RDDs.
    
