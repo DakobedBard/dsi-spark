@@ -66,18 +66,16 @@ in the RDD.
    
    - **The key is the name of the person**
    - **The value is how many chocolate chip cookies bought**
-
-2. Make the names lower-case. Use `mapByKey`.
     
-3. Similiar to `map`, `filter` for entries with more than 5 chocolate chip cookies.
+2. Similiar to `map`, `filter` for entries with more than 5 chocolate chip cookies.
 
-4. For each name, return the entry with the max number of cookies. 
+3. For each name, return the entry with the max number of cookies. 
    
    **Hint:** 
    - Use `groupByKey()`, `mapValues()`
    - Use `iterable.data` to convert a `pyspark.resultiterable.ResultIterable` to a Python list
  
-5. Calculate the total revenue from people buying cookies.
+4. Calculate the total revenue from people buying cookies.
 
    **Hint:**
    - `rdd.values()` returns another RDD of all the values
