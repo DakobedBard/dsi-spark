@@ -1,10 +1,4 @@
-##1. Intro to Spark
-PySpark is a Python wrapper around Spark, which is written in Scala. The following concepts are 
-applicable to Spark and PySpark. Complete the following tutorials in **Spark Basics** 
-and **Functional Programming**.  
-
-
-###1.1 Spark Basics
+###1 Spark Basics
 
 1. Before you start using PySpark, you need a `SparkContext`. A `SparkContext` specifies where your
    cluster is, i.e. the resources for all your distributed computation. Specify your `SparkContext`
@@ -43,33 +37,30 @@ and **Functional Programming**.
    file_rdd.take(2) # Views the first two entries
    ```
     
-   If you would like to have everything in a Python list, you would have to access every
+4. To retrieve items in your RDD into a Python list, you would have to access every
    partition of the RDD and this could take a long time. Before you execute the following 
-   command, be aware of how many entries you are pulling. It is completely fine for this 
-   toy data set.
+   command, be aware of how many entries you are pulling. Usually you pool the results 
+   (of reasonable size) into a Python list after all the big data operations are done in RDDs.
    
    ```python
    file_rdd.collect()
    lst_rdd.collect()
    ```
 
-###1.2 Functional Programming
+###2. Functional Programming
 
-1. All operations in Spark are functional. In other words, you map functions to each item in 
-   your RDD. You will rarely need a for loop (`forEach()`) in Spark. 
+Spark operations conforms to the functional programming paradigm. Objects (RDDs) are immutable 
+and mapping a function to an RDD returns another RDD. A lot of Spark's functionalities assume the 
+items in an RDD to be tuples of `(key, value)`. Structure your RDDs to be `(key, value)` whenever possible.
+
+1. Turn the items in `file_rdd` into `(key, value)` pairs. Map each item into a json object and then map to
+   the `(key, value)` pairs. **Remember to cast value as type** `int`.
    
-   As it stands now, each line in `file_rdd` is a string object, below is an example of 
-   how to map a function to each line to turn the line into a dictionary.
-   
-   ```python
-   json_rdd = file_rdd.map(lambda line: json.loads(line))
-   json_rdd.first()
-   ```
+   - **The key is the name of the person**
+   - **The value is how many chocolate chip cookies bought**
 
-   Now we have dictionaries within RDD which we can work with.
-
-2. The key of the dictionary is the name of the person and the key is how many chocolate chip 
-   cookies they have bought for the past month. Similiar to `map`, `filter` the entries in the 
+    
+2. Filter Similiar to `map`, `filter` the entries in the 
    `json_rdd` with more than 5 chocolate chip cookies.
 
 3. Most Spark built-in functions assumes each item in the RDD is a tuple of 2 `(key, value)`.
