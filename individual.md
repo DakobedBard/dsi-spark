@@ -1,4 +1,4 @@
-###1 RDD and Spark Basics
+###1. RDD and Spark Basics
 
 1. Before you start using PySpark, you need a `SparkContext`. A `SparkContext` specifies where your
    cluster is, i.e. the resources for all your distributed computation. Specify your `SparkContext`
@@ -47,7 +47,7 @@
    lst_rdd.collect()
    ```
 
-###2. Functional Programming
+###2. Intro to Functional Programming
 
 Spark operations conforms to the functional programming paradigm. Objects (RDDs) are immutable 
 and mapping a function to an RDD returns another RDD. A lot of Spark's functionalities assume the 
@@ -81,7 +81,7 @@ in the RDD.
    - Use `reduce` to return the sum of all the values
       
    
-##3. Processing data with Spark
+##3. Processing Data with Spark
 
 Here we will practice more programming with Spark using a bigger dataset.
 
