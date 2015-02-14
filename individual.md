@@ -67,7 +67,7 @@ in the RDD.
    - **The key is the name of the person**
    - **The value is how many chocolate chip cookies bought**
     
-2. Similiar to `map`, `filter` for entries with more than 5 chocolate chip cookies.
+2. Similiar to `map()`, `filter()` for entries with more than 5 chocolate chip cookies.
 
 3. For each name, return the entry with the max number of cookies. 
    
@@ -79,7 +79,7 @@ in the RDD.
 
    **Hint:**
    - `rdd.values()` returns another RDD of all the values
-   - Use `reduce` to return the sum of all the values
+   - Use `reduce()` to return the sum of all the values
       
    
 ##3. Processing Data with Spark
