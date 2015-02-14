@@ -6,7 +6,8 @@
    
    ```python
    import pyspark as ps
-   sc = ps.SparkContext('local[4]') # Uses all 4 cores on your machine
+   # Uses all 4 cores on your machine
+   sc = ps.SparkContext('local[4]') 
    ```
 
 2. The fundamental programming abstraction in Spark is called **Resilient Distributed Datasets (RDDs)**.
