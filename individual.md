@@ -65,17 +65,8 @@ are not executed until a `.first()`, `.take()` or `.count()` is call to retrieve
     
 2. Similiar to `map`, `filter` for entries with more than 5 chocolate chip cookies.
 
-3. Most Spark built-in functions assumes each item in the RDD is a tuple of 2 `(key, value)`.
-   Use `map` again on `json_rdd` to make each item a tuple, i.e. `(name, cookie bought)`. 
-   Run a `.first()` to confirm your results.
-   
-   **Note:**
-   
-   **All your map functions are not run in the Spark backend when you execute it.
-   The map operations are run when a  is called where the items
-   are needed. This is known as **
 
-4. Now we are interested in calculating how much people purchased for their cookies. Use `mapByValue`
+3. Now we are interested in calculating how much people purchased for their cookies. Use `mapByValue`
    to return an RDD with tuples `(name, money purchased)`. Again run a `first()` to confirm.
 
 5. Make the names lower-case, use `mapByKey` to achieve that.
