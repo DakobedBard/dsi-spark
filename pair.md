@@ -54,6 +54,7 @@ based on its content.
    term-frequency counts of the vocabulary (unique tokens).
    
    **Optional:**
+   
    Below is an [abridged](https://github.com/apache/spark/blob/master/mllib/src/main/scala/org/apache/spark/mllib/feature/HashingTF.scala)
    version of the Scala code for `HashingTF()`. Re-implement the `transform()`
    function in PySpark. 
