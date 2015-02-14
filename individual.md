@@ -83,25 +83,24 @@ in the RDD.
    
 ##3. Processing data with Spark
 
-Now we are familiar with the basics of Spark. Let's flex some of Spark's real power with a bigger
-dataset. Here we will run through the workflow of working with an actual dataset in Spark.
-This dataset is still not so huge that it will be impossible to process locally. We will
-get to the real big ones tomorrow where we need to be running operations on cluster of machines in
-the cloud.
+Here we will practice more programming with Spark using a bigger dataset.
 
-Here we are trying to find out which airport has the worst / least delay. There are 2 types of delays:
-arrival delays (`ARR_DELAY`) and departure delays (`DEP_DELAY`). All delays are in terms of minutes.
-`ARR_DELAY` is associated with the destination airport (`DEST_AIRPORT_ID`), and
-`DEP_DELAY` is associated with the destination airport (`ORIGIN_AIRPORT_ID`).
+The goal is to identify airports with the worst / least delay.
+ 
+**2 types of delays:**
+- Arrival delays (`ARR_DELAY`) and departure delays (`DEP_DELAY`)
+- All delays are in terms of minutes
+- `ARR_DELAY` is associated with the destination airport (`DEST_AIRPORT_ID`)
+- `DEP_DELAY` is associated with the destination airport (`ORIGIN_AIRPORT_ID`)
 
-1. Just as above, define your `SparkContext` to be `local[4]`. Load the text file in via an S3 link 
-   to the file. 
+1. Start a new notebook and make a new `SparkContext`. There could only be one Spark instance
+   per Python instance. Load the file as follow.
 
    ```python
    airline = sc.textFile('s3n://mortar-example-data/airline-data')
    ```
 
-2. Show the first 2 entries. The first line is the column names and starting from the second line is 
+2. Print the first 2 entries. The first line is the column names and starting from the second line is 
    the corresponding data. Also run a `.count()` on the RDD. This will **take a while** as the data set is
    a few million rows.
 
