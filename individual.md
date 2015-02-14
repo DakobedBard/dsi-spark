@@ -64,35 +64,22 @@ in the RDD.
    - **The key is the name of the person**
    - **The value is how many chocolate chip cookies bought**
 
+2. Make the names lower-case. Use `mapByKey`.
     
-2. Similiar to `map`, `filter` for entries with more than 5 chocolate chip cookies.
+3. Similiar to `map`, `filter` for entries with more than 5 chocolate chip cookies.
 
-3. For each name, return the entry with the max number of cookies. 
+4. For each name, return the entry with the max number of cookies. 
    
    **Hint:** 
    - Use `groupByKey()`, `mapValues()`
-   - Use `iterable.data` to convert a `pyspark.resultiterable.ResultIterable` to a Python list**
+   - Use `iterable.data` to convert a `pyspark.resultiterable.ResultIterable` to a Python list
  
- 
-4. 
+5. Calculate the total revenue from people buying cookies.
 
-Calculate how much each n calculating how much people purchased for their cookies. Use `mapByValue`
-   to return an RDD with tuples `(name, money purchased)`. Again run a `first()` to confirm.
-
-5. Make the names lower-case, use `mapByKey` to achieve that.
-
-   **Note:**
-   
-   **In general, when you are doing functional programming with Spark, keep the function of 
-   each of your map operation small. Spark will be able to distribute resources and parallelize 
-   more efficiently**
-   
-6. Same as mrjobs of the map-reduce framework, Spark is built on the same framework and can do
-   reduce operations. Calculate the total amount of money from purchasing cookies from everyone.
-   Use `rdd.values()` to access all the values as an RDD and then do a `reduce` to get the sum.
-   This might seem to be a rather pointless exercise with a few entries in this toy dataset, but
-   the performance difference is huge on massive data sets.
-   
+   **Hint:**
+   - `rdd.values()` returns another RDD of all the values
+   - Use `reduce` to return the sum of all the values
+      
    
 ##2. Practical Operations with Spark
 
