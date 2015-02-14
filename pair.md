@@ -62,7 +62,7 @@ based on its content.
    - Input: `pyspark.resultiterable.ResultIterable` (Lists in PySpark), `feature_num` (int)
    - Output: Python list of word counts with length of `feature_num`
    - Use `collections.Counter()` to avoid the `forEach()` loop
-   - Test your function with 1 `ResultIterable`
+   - Test your function with one `pyspark.resultiterable.ResultIterable` object
    - Compare your results with the `transform()` method
    
    <br>
