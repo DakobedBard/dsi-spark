@@ -64,6 +64,8 @@ based on its content.
    - Test your function with 1 `ResultIterable`
    - Compare your results with the `transform()` method
    
+   <br>
+   
    ```scala
    class HashingTF(val numFeatures: Int) extends Serializable {
      def this() = this(1 << 20)
