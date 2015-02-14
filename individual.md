@@ -1,4 +1,4 @@
-###1 Spark Basics
+###1 RDD and Spark Basics
 
 1. Before you start using PySpark, you need a `SparkContext`. A `SparkContext` specifies where your
    cluster is, i.e. the resources for all your distributed computation. Specify your `SparkContext`
@@ -81,7 +81,7 @@ in the RDD.
    - Use `reduce` to return the sum of all the values
       
    
-##2. Practical Operations with Spark
+##3. Processing data with Spark
 
 Now we are familiar with the basics of Spark. Let's flex some of Spark's real power with a bigger
 dataset. Here we will run through the workflow of working with an actual dataset in Spark.
