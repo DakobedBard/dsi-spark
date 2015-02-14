@@ -1,6 +1,6 @@
 ###1. RDD and Spark Basics
 
-1. Before you start using PySpark, you need a `SparkContext`. A `SparkContext` specifies where your
+1. Initiate a `SparkContext`. A `SparkContext` specifies where your
    cluster is, i.e. the resources for all your distributed computation. Specify your `SparkContext`
    as follows.
    
