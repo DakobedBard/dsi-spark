@@ -29,6 +29,7 @@ based on its content.
    ```
    
 2. There are 3 fields in the data: `label`, `label_name` and `text`.
+
    Make an RDD of unique `(label, label_name)` key / value pairs.
    Collect the RDD to a python dictionary. That is needed for reference later.
    
@@ -44,6 +45,7 @@ based on its content.
    - Stemming 
    - Splitting on white spaces
    - Consider using the following:
+   
      ```python
      PUNCTUATION = set(string.punctuation)
      STOPWORDS = set(stopwords.words('english'))
@@ -52,7 +54,7 @@ based on its content.
      
    Map the function to the `text`.
 
-4. Transform the tokenized text to term-frequency vectors. Consider the
+4. Transform the tokenized text to term-frequency (TF) vectors. Consider the
    following guidelines. Feel free to implement it in other ways that do 
    not involve using the built-in `HashingTF()` or exporting the `text` out of the RDD.
    The goal here is to practice using functional programming to perform
