@@ -21,21 +21,21 @@ based on its content.
    from collectons import Counter
    ```
 
-1. Make a `SparkContext()` and load the text file into an RDD. Map the lines
+2. Make a `SparkContext()` and load the text file into an RDD. Map the lines
    to dictionaries. Take the first 2 lines to confirm your results.
 
    ```python
    data_raw = sc.textFile('s3n://newsgroup/news.txt')
    ```
    
-2. There are 3 fields in the data: `label`, `label_name` and `text`.
+3. There are 3 fields in the data: `label`, `label_name` and `text`.
 
    - Make an RDD of unique `(label, label_name)` pairs.
    Collect the RDD to a python dictionary. That is needed for reference later.
    
    - Make another RDD with `(label, text)`. 
 
-3. Write a `tokenize()` function that would take the article content
+4. Write a `tokenize()` function that would take the article content
    as string and return a list of words. 
    
    - Your `tokenize()` function should achieve:
@@ -54,7 +54,7 @@ based on its content.
      
     - Map the function to the `text`.
 
-4. Transform the tokenized text to term-frequency (TF) vectors. Consider the
+5. Transform the tokenized text to term-frequency (TF) vectors. Consider the
    following guidelines. Feel free to implement it in other ways that do 
    not involve using the built-in `HashingTF()` or exporting the `text` out of the RDD.
    The goal here is to practice using functional programming to perform
@@ -81,10 +81,21 @@ based on its content.
        word_vec_rdd.count()
        ```
            
-5. Spark uses a `LabeledPoint(target, feature)` object to store the target (numeric)
+6. Spark uses a `LabeledPoint(target, feature)` object to store the target (numeric)
    and features (numeric vector) for all machine learning alogrithm. 
    Map `LabeledPoint(target, feature)` to the RDD and keep the returned RDD in 
    cache using `persist()`. The `feature` is the TF vector.
    
-6. Use `randomSplit()` (RDD built-in method) to do a train test split of `70:30`.
+7. Use `randomSplit()` (RDD built-in method) to do a train test split of `70:30`.
+
+8. Train the `NaiveBayes` model on the train data set. See the 
+   [docs](http://spark.apache.org/docs/1.2.0/api/python/pyspark.mllib.html#module-pyspark.mllib.classification)
+   here.
+   
+9. Map the `predict()` function of the `NaiveBayes` model onto the test set features to get
+   predictions. Caculate the accuracy of the predictions.
+
+10. Examine the predictions that are incorrect. Use the dictionary you have created in `3.` to get
+    the `label_name` of those predictions. Examine the content of the incorrect predictions and
+    try to reason why the content is incorrectly predicted.
 
