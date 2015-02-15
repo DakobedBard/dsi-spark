@@ -30,21 +30,21 @@ based on its content.
    
 2. There are 3 fields in the data: `label`, `label_name` and `text`.
 
-   Make an RDD of unique `(label, label_name)` key / value pairs.
+   - Make an RDD of unique `(label, label_name)` pairs.
    Collect the RDD to a python dictionary. That is needed for reference later.
    
-   Make another RDD with `(label, text)`. 
+   - Make another RDD with `(label, text)`. 
 
 3. Write a `tokenize()` function that would take the article content
    as string and return a list of words. 
    
-   Your `tokenize()` function should achieve:
-   - Lower casing the text
-   - Removing puntuations
-   - Removing stop words
-   - Stemming 
-   - Splitting on white spaces
-   - Consider using the following:
+   - Your `tokenize()` function should achieve:
+     - Lower casing the text
+     - Removing puntuations
+     - Removing stop words
+     - Stemming 
+     - Splitting on white spaces
+     - Consider using the following:
    
      ```python
      PUNCTUATION = set(string.punctuation)
@@ -52,7 +52,7 @@ based on its content.
      STEMMER = PorterStemmer()
      ```
      
-   Map the function to the `text`.
+    - Map the function to the `text`.
 
 4. Transform the tokenized text to term-frequency (TF) vectors. Consider the
    following guidelines. Feel free to implement it in other ways that do 
