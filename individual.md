@@ -12,7 +12,7 @@ Here we will be using **PySpark**, but the concepts are transferrable to Spark i
    sc = ps.SparkContext('local[4]') 
    ```
 
-2. Operations in Spark uses **Resilient Distributed Datasets (RDDs)**.
+2. Spark operates in **Resilient Distributed Datasets (RDDs)**.
    **An RDD is a collection of data partitioned across machines**. 
    Using RDDs allow the processing of your data to be parallelized due to the partitions.
    RDDs can be created by referencing datasets in external storage systems, or from Python
