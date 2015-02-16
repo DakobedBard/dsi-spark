@@ -35,7 +35,7 @@ To connect to the Amazon EC2 instances you will be creating tomorrow, you need t
 - After setting up your account, go to the [EC2 console](https://console.aws.amazon.com/ec2). On the left
   click **Key Pair** and then **Create Key Pair**
   
-  ![images/keypair](images/keypair.png)
+  <img height="400px" src="images/keypair.png">
     
 - Download and save the `.pem` private key file to disk.
   Make sure only you can access the .pem file. If you do not change the permissions,
