@@ -1,4 +1,4 @@
-###1. RDD and Spark Basics
+##1. RDD and Spark Basics
 
 Here we will be using **PySpark**, but the concepts are transferrable to Spark in Scala.
 
@@ -50,7 +50,7 @@ Here we will be using **PySpark**, but the concepts are transferrable to Spark i
    lst_rdd.collect()
    ```
 
-###2. Intro to Functional Programming
+##2. Intro to Functional Programming
 
 Spark operations conforms to the functional programming paradigm. Objects (RDDs) are immutable 
 and mapping a function to an RDD returns another RDD. A lot of Spark's functionalities assume the 
