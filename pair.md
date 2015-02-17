@@ -102,7 +102,7 @@ based on its content.
     of the file containing the new articles as a command line argument (use `argparse`).
     
     The script should do the following:
-    - Read and preprocess the new data
+    - Read and preprocess the new data (`data/news_test.pkl`)
     - Preprocessing must be the same as you have done to build the model above
     - Put the new data in an RDD
     - Find the 20 most common words in each article
