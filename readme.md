@@ -10,4 +10,4 @@ Toady we will get familiar with the Spark environment using the Python API, PySp
 run things locally using PySpark and tomorrow we will move on running Spark jobs in EC2 instances
 in the cloud.
 
-Lecture slides: [here](https://drive.google.com/file/d/0B_1ScIZP4KcueldFV1UyOEdURGs/view?usp=sharing)
+**Lecture slides: [here](https://drive.google.com/file/d/0B_1ScIZP4KcueldFV1UyOEdURGs/view?usp=sharing)**
