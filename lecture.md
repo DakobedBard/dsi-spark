@@ -64,7 +64,7 @@
 		* sorting, joining, grouping, counting, etc.
 		
 
-* ** MapReduce is a common programming model**
+* **MapReduce is a common programming model**
 	* **Two Phases**
 		* **Map** -- process each element in a data set
 		* **Reduce** -- aggregate or consolidate the data
@@ -101,11 +101,11 @@ counts = sc.textFile(file) \
 # Spark shell provides a proconfigured Spark Context called `sc`
 nums = sc.parallelize([1,2,3])
 # Pass each element through a function
-squared = nums.map(lambda x: x*x) # => {1, 4, 9}
+squared = nums.map(lambda x: x*x) // => {1, 4, 9}
 # Keep elements passing a predicate
-even = squared.filter(lambda x: x % 2 == 0) # => {4]
+even = squared.filter(lambda x: x % 2 == 0) // => {4]
 # Map each element to zero or more others
-nums.flatMap(lambda x: range(x)) # => {0, 0, 1, 0, 1, 2}
+nums.flatMap(lambda x: range(x)) // => {0, 0, 1, 0, 1, 2}
 ```
 
 ## Basic Actions
@@ -113,13 +113,13 @@ nums.flatMap(lambda x: range(x)) # => {0, 0, 1, 0, 1, 2}
 ```python
 nums = parallelize([1, 2,3])
 # Retrieves RDD contents as a local collection
-nums.collect() # => [1, 2, 3}]
+nums.collect() // => [1, 2, 3}]
 # Returms first K elements
-nums.take(2) # => [1, 2]
-#Count number of elements
-nums.count # => 3
+nums.take(2) // => [1, 2]
+# Count number of elements
+nums.count // => 3
 # Merge elements with an associative function
-nums.reduce(lambda: x, y: x + y) # => 6
+nums.reduce(lambda: x, y: x + y) // => 6
 # Write elements to a text file
 nums.saveAsTextFile("hdfs://file.txt")
 ```
@@ -128,7 +128,7 @@ nums.saveAsTextFile("hdfs://file.txt")
 ```python
 pets = sc.parallelize(
 	[("cat", 1), ("dog", 1), ("cat", 2)])
-pets.reduceByKey(lambda x, y: x + y) # => {(cat, 3), (dog, 1)}
-pets.groupByKey() # => {(cat, [1, 2]), (dog, [1])}
-pets.sortByKey() # => {(cat, 1), (cat, 2), (dog, 1)}
+pets.reduceByKey(lambda x, y: x + y) // => {(cat, 3), (dog, 1)}
+pets.groupByKey() // => {(cat, [1, 2]), (dog, [1])}
+pets.sortByKey() // => {(cat, 1), (cat, 2), (dog, 1)}
 ```

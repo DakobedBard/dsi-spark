@@ -60,14 +60,14 @@ Also beware of [**lazy evaluation**](http://en.wikipedia.org/wiki/Lazy_evaluatio
 are not executed until a `.collect()`, `.first()`, `.take()` or `.count()` is call to retrieve items
 in the RDD.
 
-1. Turn the items in `file_rdd` into `(key, value)` pairs. Map each item into a json object and then map to
+1. Turn the items in `file_rdd` into `(key, value)` pairs using `map()` and a `lambda` function. Map each item into a json object and then map to
    the `(key, value)` pairs. **Remember to cast value as type** `int`. Use `collect()` to see your results.
    Using `collect()` is fine here since the data is small.
    
    - **The key is the name of the person**
    - **The value is how many chocolate chip cookies bought**
     
-2. Similiar to `map()`, `filter()` for entries with more than 5 chocolate chip cookies.
+2. Now use `filter()` to look for entries with more than `5` chocolate chip cookies.
 
 3. For each name, return the entry with the max number of cookies. 
    
@@ -84,13 +84,16 @@ in the RDD.
    
 ##3. Processing Data with Spark
 
-Here we will practice more programming with Spark using a bigger dataset.
+Now let's scale up to a larger dataset.
 
-The goal is to identify airports with the worst / least delay.
+### Objectives
+
+* Identify airports with the worst / least delay.
  
 **2 types of delays:**
+
 - Arrival delays (`ARR_DELAY`) and departure delays (`DEP_DELAY`)
-- All delays are in terms of minutes
+- All delays are in terms of **minutes**
 - `ARR_DELAY` is associated with the destination airport (`DEST_AIRPORT_ID`)
 - `DEP_DELAY` is associated with the destination airport (`ORIGIN_AIRPORT_ID`)
 
