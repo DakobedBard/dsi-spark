@@ -18,9 +18,9 @@ Distributed Processing with the Spark Framework
 
 * **RDD (Resilient Distributed Dataset)**
 
-	* Resilient -- if the data in memory is lost, it can be recreated
-	* Distributed -- stored in memory across the cluster
-	* Dataset -- initial data can come from a filer or created programmatically
+	* **R**esilient -- if the data in memory is lost, it can be recreated
+	* **D**istributed -- stored in memory across the cluster
+	* **D**ataset -- initial data can come from a file or created programmatically
 * RDDs are the fundamental unit of data in Spark
 * Most of Spark programming is performing operations on RDDs
 * Two types of RDD operations
@@ -31,8 +31,13 @@ Distributed Processing with the Spark Framework
 		* ```filter```
 		* ```map```
 		* ```reduce```
+		
+
+![image](images/sparkflow.png)
 		 
 ![image](images/mapfilter.png)
+
+
 
 * RDDs can hold any type of element
 	* Primitive types: ints, chars, booleans, strings, etc.
@@ -87,3 +92,15 @@ counts = sc.textFile(file) \
 ``` 
 
 ![image](images/wordcount.png)
+
+## Basic Transformations
+
+```python
+nums = sc.parallelize([1,2,3])
+# Pass each element through a function
+squared = nums.map(lambda x: x*x) // {1, 4, 9}
+# Keep elements passing a predicate
+even = squared.filter(lambda x: x % 2 == 0) // {4]
+# Map each element to zero or more others
+nums.flatMap(lambda x: range(x)) // # => {0, 0, 1, 0, 1, 2}
+```
