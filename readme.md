@@ -9,3 +9,5 @@ than Hive and other Hadoop systems in performing distributed machine learning ta
 Toady we will get familiar with the Spark environment using the Python API, PySpark. We would
 run things locally using PySpark and tomorrow we will move on running Spark jobs in EC2 instances
 in the cloud.
+
+Lecture slides: [https://drive.google.com/file/d/0B_1ScIZP4KcueldFV1UyOEdURGs/view?usp=sharing](here)
