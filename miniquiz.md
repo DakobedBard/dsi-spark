@@ -56,9 +56,8 @@ To connect to the Amazon EC2 instances you will be creating tomorrow, you need t
 
    ```
    export SPARK_HOME=[path to your unzipped spark folder]
-   export PYTHONPATH=[path to your unzipped spark folder]python/:$PYTHONPATH
+   export PYTHONPATH=[path to your unzipped spark folder]/python/:$PYTHONPATH
    ```
-
 7. Now open up an ipython terminal and `import pyspark as ps`. If it did not throw an error,
    then you are ready to go.
    
