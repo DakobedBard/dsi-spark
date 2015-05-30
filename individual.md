@@ -103,10 +103,13 @@ Now let's scale up to a larger dataset.
    ```python
    airline = sc.textFile('s3n://mortar-example-data/airline-data')
    ```
-
+   
 2. Print the first 2 entries. The first line is the column names and starting from the second line is 
    the corresponding data. Also run a `.count()` on the RDD. This will **take a while** as the data set is
    a few million rows.
+
+If you get this error when trying to access the RDD data: "AWS Access Key ID and Secret Access Key must be specified as the username or password (respectively) of a s3n URL", try passing in the URL using the following format with your access key and secret key.
+'s3n://[AWS_ACCESS_KEY_ID]:[AWS_SECRET_ACCESS_KEY]@mortar-example-data/airline-data'
 
 3. Let's do some preprocessing. Remove the `'`, `"` and the trailing `,` for each line. Print the first 2 lines
    to confirm. The first 2 lines should look like the following.
