@@ -131,7 +131,7 @@ Now let's scale up to a larger dataset.
    
    - The output is a dictionary with only these columns:
      `['DEST_AIRPORT_ID', 'ORIGIN_AIRPORT_ID', 'DEP_DELAY', 'ARR_DELAY']`
-   - Cast `DEP_DELAY` and `ARR_DELAY` as an integer. These are minutes that are delayed.
+   - Cast `DEP_DELAY` and `ARR_DELAY` as a float. These are minutes that are delayed.
    - Subtract `DEP_DELAY` from `ARR_DELAY` to get the actual `ARR_DELYAY`
    - If a flight is `CANCELLED`, add 5 hours to `DEP_DELAY`
    - There are missing values in `DEP_DELAY` and `ARR_DELAY` (i.e. `''`) and you would want
