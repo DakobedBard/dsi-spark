@@ -152,7 +152,7 @@ Now let's scale up to a larger dataset.
    need to be reproduced every time they are called upon. Use `persist()` for RDDs that you are 
    going to repeatedly use.
 
-9. Sort the RDDs by the mean delay time to answer the following questions.
+9. Use `rdd.sortBy()` to sort the RDDs by the mean delay time to answer the following questions.
 
     - Top 10 departing airport that has least avgerage delay in minutes
     - Top 10 departing airport that has most avgerage delay in minutes
