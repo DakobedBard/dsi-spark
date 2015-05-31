@@ -108,10 +108,12 @@ Now let's scale up to a larger dataset.
    the corresponding data. Also run a `.count()` on the RDD. This will **take a while** as the data set is
    a few million rows. 
 
-3. As you can see `.count()` takes a long time to run. It's a common practice to sub-sample your data when writing your code so you don't have to wait for different commands to run. You can use `.take(100)` to sample out the first 100 rows and assign it to a new RDD using `sc.parallelize`.
+   If you get this error when trying to access the RDD data: "AWS Access Key ID and Secret Access Key must be specified as the    username or password (respectively) of a s3n URL", try passing in the URL using the following format with your access key 
+   and secret key:
+   
+   `s3n://[AWS_ACCESS_KEY_ID]:[AWS_SECRET_ACCESS_KEY]@mortar-example-data/airline-data1`
 
-If you get this error when trying to access the RDD data: "AWS Access Key ID and Secret Access Key must be specified as the username or password (respectively) of a s3n URL", try passing in the URL using the following format with your access key and secret key.
-'s3n://[AWS_ACCESS_KEY_ID]:[AWS_SECRET_ACCESS_KEY]@mortar-example-data/airline-data'
+3. As you can see `.count()` takes a long time to run. It's a common practice to sub-sample your data when writing your code so you don't have to wait for different commands to run. You can use `.take(100)` to sample out the first 100 rows and assign it to a new RDD using `sc.parallelize`.
 
 3. Let's do some preprocessing. Remove the `'`, `"` and the trailing `,` for each line. Print the first 2 lines
    to confirm. The first 2 lines should look like the following.
