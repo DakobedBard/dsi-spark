@@ -1,6 +1,7 @@
-##1. RDD and Spark Basics
+##Part 1: RDD and Spark Basics
 
-Here we will be using **PySpark**, but the concepts are transferrable to Spark in Scala.
+Here we will be just using a master/driver node in Spark (PySpark). In the next part we are going simulate a 
+master-worker cluster to run our jobs.
 
 1. Initiate a `SparkContext`. A `SparkContext` specifies where your
    cluster is, i.e. the resources for all your distributed computation. Specify your `SparkContext`
