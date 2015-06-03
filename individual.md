@@ -108,7 +108,7 @@ Now let's scale up to a larger dataset.
    the corresponding data. Also run a `.count()` on the RDD. This will **take a while** as the data set is
    a few million rows. 
 
-   If you get this error when trying to access the RDD data: "AWS Access Key ID and Secret Access Key must be specified as the    username or password (respectively) of a s3n URL", try passing in the URL using the following format with your access key 
+   If you get an error when trying to access the RDD data: "AWS Access Key ID and Secret Access Key must be specified as the    username or password (respectively) of a s3n URL", try passing in the URL using the following format with your access key 
    and secret key:
    
    `s3n://[AWS_ACCESS_KEY_ID]:[AWS_SECRET_ACCESS_KEY]@mortar-example-data/airline-data1`
