@@ -178,7 +178,7 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
    IPYTHON_OPTS="notebook"  ${SPARK_HOME}/bin/pyspark --master spark://127.0.0.1:7077 --executor-memory 1G --driver-memory 1G
    ```
 
-8. Now if you refresh your spark web UI, you should see PySparkShell running in the list of applications. 
+8. Now if you refresh your spark web UI, you should see **`PySparkShell`** running in the list of applications. 
    
    ![running_application](https://github.com/zipfian/spark/blob/master/images/running_application.png)
 

@@ -1,8 +1,11 @@
 # Spark Web UI guide
 
-In the UI, if you click on PySparkShell (in the list of applications) You'd be routed to the following page: 
+In the UI, if you click on **`PySparkShell`** (in the list of applications) You'd be routed to the following page: 
 
-![pysparkshell_page](https://github.com/zipfian/spark/blob/master/images/pysparkshell_page.png)
+![running_application](images/running_application.png)
+
+
+![pysparkshell_page](images/pysparkshell_page.png)
 
 Click on the **Application Detail UI** and you see the Spark Jobs page which contains detailed execution information for active and recently completed Spark jobs. (We don't see any jobs since we haven't run any jobs yet) As we go through this exercise, we want to monitor our Spark jobs.
 
