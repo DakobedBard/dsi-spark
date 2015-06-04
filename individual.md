@@ -63,7 +63,10 @@ items in an RDD to be tuples of `(key, value)`. Structure your RDDs to be `(key,
 
 Also beware of [**lazy evaluation**](http://en.wikipedia.org/wiki/Lazy_evaluation) where operations
 are not executed until a `.collect()`, `.first()`, `.take()` or `.count()` is call to retrieve items
-in the RDD.
+in the RDD. 
+
+**So if you are doing a lot transformations in a row, call `first()` in between to ensure your transformations
+are running properly.**
 
 **If you are not sure what RDD transformations/actions there are, check out [http://spark.apache.org/docs/0.7.3/api/pyspark/pyspark.rdd.RDD-class.html](http://spark.apache.org/docs/0.7.3/api/pyspark/pyspark.rdd.RDD-class.html)**
 
@@ -279,9 +282,9 @@ airports with the worst / least delay.
    to `groupByKey()` and then take the mean of the delay times for the particular airport. 
    Use the PySpark [docs](http://spark.apache.org/docs/latest/api/python/pyspark.html#module-pyspark).
 
-9. Run `rdd.persist()` on the RDDs you made in in `8.`. That will cache the RDDs so they do not
-   need to be reproduced every time they are called upon. Use `persist()` for RDDs that you are 
-   going to repeatedly use.
+9. Run `rdd.persist()` on the RDDs you made in in `8.`. Remember to set the name of the RDD using `.setName()`
+   before running `persist()`.  That will cache the RDDs so they do not need to be reproduced every time they are
+   called upon. Use `persist()` for RDDs that you are going to repeatedly use.
 
 10. Use `rdd.sortBy()` to sort the RDDs by the mean delay time to answer the following questions.
 
