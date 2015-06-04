@@ -88,7 +88,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
 
 10. Train the `NaiveBayes` model on the train data set. See the 
    [docs](http://spark.apache.org/docs/1.2.0/api/python/pyspark.mllib.html#module-pyspark.mllib.classification)
-   here.
+   here. The  `NaiveBayes` model is a Python class and once it is trained it can just be used as a Python class.
    
 11. Map the `predict()` function of the `NaiveBayes` model onto the test set features to get
    predictions. Caculate the accuracy of the predictions. Your accuracy should be above 80%.
@@ -114,4 +114,51 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
     - Find the 20 most common words in each article
     - Unpickle your model and make predictions for the label of the article
     - Write out a file with the predicted labels and the most common words 
-    
+
+<br>
+
+##Extra Credit: Word2Vec
+
+Spark also has a word2vec implementation. Word2Vec is a technique to get better representation of word vector
+through unsupervised training (regardless of the category / class of the article). Word2Vec has 2 implementations.
+Skip gram, where given 2 neighboring words, the skipped word is being predicted. Also continuous bag of word where
+the current word is being predicted based on neighboring words. The resulting vector is the output of a hidden layer
+in a feed-forward neural network which has been shown to better represent the context of the word.
+
+<br>
+
+1. To train a Word2Vec model, we need training data. Load in the data as follows:
+
+   ```python
+   data = sc.textFile('s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@jyt109/word2vec/text8_lines')
+   ```
+   
+2. Import and instantiate a Word2Vec() class. 
+
+   ```python
+   from pyspark.mllib.feature import Word2Vec
+   word2vec = Word2Vec()
+   ```
+
+3. Fit the `Word2Vec()` class with an RDD where each item is a list of words from each article. 
+   The model will take a while to train (~10 - 20 mins). However, once the model is trained, it does not
+   have to be re-trained. It can be used as a normal Python class.
+   
+4. One of common uses of Word2Vec is to find words similar in context to a word in question. Call the `findSynonyms()`
+   function of the model and provide the word in question as the first argument and the number of most similar words
+   to extract as the second argument. 
+   
+5. The result is a tuple of `(words, cos similarity)`. Print out the words closest to `general`. Try out other words
+   you like. 
+   
+6. The `Word2Vec` class also has transform method that takes a word and transform it to the word vector which is
+   the output of the hidden layer as discussed. This allows to do other things such as clustering words that 
+   potentially have similar context.
+   
+6. Check out [Gensim's](https://radimrehurek.com/gensim/) Word2Vec implementation as well if you are interested.
+   
+   
+   
+
+
+
