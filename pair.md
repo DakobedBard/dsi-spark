@@ -155,7 +155,7 @@ in a feed-forward neural network which has been shown to better represent the co
    the output of the hidden layer as discussed. This allows to do other things such as clustering words that 
    potentially have similar context.
    
-6. Check out [Gensim's](https://radimrehurek.com/gensim/) Word2Vec implementation as well if you are interested.
+6. Check out [Gensim's](http://radimrehurek.com/2014/02/word2vec-tutorial/) Word2Vec implementation as well if you are interested.
    
    
    
