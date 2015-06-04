@@ -9,9 +9,11 @@
 
 ##Spark / PySpark Installation
 
+If you want to install PySpark on your laptop
+
 1. Go to this [link](http://spark.apache.org/downloads.html). 
 2. Select `Pre-built for Hadoop 1.X` under `2. Chose a package type:`.
-3. Download the tar package by `Download Spark: spark-1.2.0-bin-hadoop1.tgz`
+3. Download the tar package by `Download Spark: spark-1.2.1-bin-hadoop1.tgz`. Version `1.3` would work too.
 4. Unzip the file and place it at your home directory
 5. Make sure the folder name is `spark-1.2.1-bin-hadoop1`
 6. Include the following lines in the `~/.bashrc` or `~/.zshrc` file
