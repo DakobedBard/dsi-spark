@@ -14,8 +14,6 @@
 3. Download the tar package by `Download Spark: spark-1.2.0-bin-hadoop1.tgz`
 4. Unzip the file and place it at your home directory
 5. Make sure the folder name is `spark-1.2.1-bin-hadoop1`
-5. Open up your `~/.bashrc` in a text editor or `~/.zshrc` if you are using the z-shell
-6. Include the following lines in the `~/.bashrc` or `~/.zshrc` file
 
    ```
    export SPARK_HOME=[path to your unzipped spark folder]
