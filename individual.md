@@ -1,7 +1,7 @@
 ##Part 1: RDD and Spark Basics
 
-Here we will be just using a master/driver node in Spark (PySpark). In the next part we are going simulate a 
-master-worker cluster to run our jobs.
+Here we will get familiar with the basics of Spark (PySpark). We will be just using a master/driver node.
+In `Part 3`, we are going simulate a master-worker cluster to run our jobs.
 
 1. Initiate a `SparkContext`. A `SparkContext` specifies where your
    cluster is, i.e. the resources for all your distributed computation. Specify your `SparkContext`
@@ -25,7 +25,8 @@ master-worker cluster to run our jobs.
    lst_rdd = sc.parallelize([1, 2, 3])
    ```
    
-   Read an RDD in from a text file. By default, the RDD will treat each line as an item.
+   Read an RDD in from a text file. 
+   **By default, the RDD will treat each line as an item and read it in as string.**
    
    ```python
    file_rdd = sc.textFile('data/toy_data.txt')
@@ -50,8 +51,9 @@ master-worker cluster to run our jobs.
    file_rdd.collect()
    lst_rdd.collect()
    ```
+<br>
 
-##2. Intro to Functional Programming
+##Part 2: Intro to Functional Programming
 
 Spark operations conforms to the functional programming paradigm. Objects (RDDs) are immutable 
 and mapping a function to an RDD returns another RDD. A lot of Spark's functionalities assume the 
@@ -61,9 +63,10 @@ Also beware of [**lazy evaluation**](http://en.wikipedia.org/wiki/Lazy_evaluatio
 are not executed until a `.collect()`, `.first()`, `.take()` or `.count()` is call to retrieve items
 in the RDD.
 
-1. Turn the items in `file_rdd` into `(key, value)` pairs using `map()` and a `lambda` function. Map each item into a json object and then map to
-   the `(key, value)` pairs. **Remember to cast value as type** `int`. Use `collect()` to see your results.
-   Using `collect()` is fine here since the data is small.
+**If you are not sure what RDD transformations/actions there are, check out [http://spark.apache.org/docs/0.7.3/api/pyspark/pyspark.rdd.RDD-class.html](http://spark.apache.org/docs/0.7.3/api/pyspark/pyspark.rdd.RDD-class.html)**
+
+1. Turn the items in `file_rdd` into `(key, value)` pairs using `map()` and a `lambda` function. Map each item into    a json object (use `json.loads`) and then map to the `(key, value)` pairs. **Remember to cast value as type**  
+   `int`.  Use `collect()` to see your results. Using `collect()` is fine here since the data is small.
    
    - **The key is the name of the person**
    - **The value is how many chocolate chip cookies bought**
@@ -73,8 +76,9 @@ in the RDD.
 3. For each name, return the entry with the max number of cookies. 
    
    **Hint:** 
-   - Use `groupByKey()`, `mapValues()`
-   - Use `iterable.data` to convert a `pyspark.resultiterable.ResultIterable` to a Python list
+   - Use `reduceByKey()` instead of `groupByKey()`. See why [here](https://github.com/databricks/spark-knowledgebase/blob/master/best_practices/prefer_reducebykey_over_groupbykey.md)
+   - You will see a `pyspark.resultiterable.ResultIterable` returned. It has a `.data` attribute 
+     which you can use to access the Python list
  
 4. Calculate the total revenue from people buying cookies.
 
@@ -83,13 +87,34 @@ in the RDD.
    - Use `reduce()` to return the sum of all the values
       
    
-##3. Processing Data with Spark
+##Part 3: Processing Data with Spark
 
-Now let's scale up to a larger dataset.
+Here we will simulate starting a master/worker cluster locally. That allows us to develop code on a local cluster
+before deployment. 
 
-### Objectives
+1. Start a master node by running the below in a terminal:
 
-* Identify airports with the worst / least delay.
+   ```bash
+   ${SPARK_HOME}/bin/spark-class\ org.apache.spark.deploy.master.Master \
+   -h 127.0.0.1 \
+   -p 7077 \
+   --webui-port 8080
+   ```
+2. In a new terminal, start a worker node (with 1GB RAM and 1 core) under the master node you started.
+ 
+   ```bash
+   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker
+   -c 1 \
+   -m 1G \
+   spark://127.0.0.1:7077
+   ```
+
+3. Start a second worker in another new terminal.
+
+<br>
+
+
+Here we will be dealing with airport data and we would want to identify airports with the worst / least delay.
  
 **2 types of delays:**
 
@@ -102,17 +127,14 @@ Now let's scale up to a larger dataset.
    per Python instance. Load the file as follow.
 
    ```python
-   airline = sc.textFile('s3n://mortar-example-data/airline-data')
+   # DON'T INCLUDE THE '<' AND '>'
+   link = s3n://<YOUR_AWS_ACCESS_KEY_ID>:<YOUR_AWS_SECRET_ACCESS_KEY>@mortar-example-data/airline-data
+   airline = sc.textFile(link)
    ```
    
 2. Print the first 2 entries. The first line is the column names and starting from the second line is 
    the corresponding data. Also run a `.count()` on the RDD. This will **take a while** as the data set is
    a few million rows. 
-
-   If you get an error when trying to access the RDD data: "AWS Access Key ID and Secret Access Key must be specified as the    username or password (respectively) of a s3n URL", try passing in the URL using the following format with your access key 
-   and secret key:
-   
-   `s3n://[AWS_ACCESS_KEY_ID]:[AWS_SECRET_ACCESS_KEY]@mortar-example-data/airline-data1`
 
 3. As you can see `.count()` takes a long time to run. It's a common practice to sub-sample your data when writing your code so you don't have to wait for different commands to run. You can use `.take(100)` to sample out the first 100 rows and assign it to a new RDD using `sc.parallelize`.
 
