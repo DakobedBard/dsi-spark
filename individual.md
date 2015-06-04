@@ -90,45 +90,112 @@ in the RDD.
 
 <br>
    
-##Part 3: Processing Data with Spark
+##Part 3: Starting a Local Cluster
 
 Here we will simulate starting a master/worker cluster locally. That allows us to develop code on a local cluster
-before deployment. 
+before deployment. We will be using [`tmux`](http://tmux.sourceforge.net/) to run our scripts in the background .
+`tmux` lets us *multiplex* your terminal, create terminal sessions, and attach/detach 
+different programs in the terminal (somewhat like running processes in hidden terminals).
 
-<br>
-
-1. Start a master node by running the below in a terminal:
-
-   ```bash
-   ${SPARK_HOME}/bin/spark-class\ org.apache.spark.deploy.master.Master \
-   -h 127.0.0.1 \
-   -p 7077 \
-   --webui-port 8080
-   ```
-2. In a new terminal, start a worker node (with 1GB RAM and 1 core) under the master node you started.
- 
-   ```bash
-   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker
-   -c 1 \
-   -m 1G \
-   spark://127.0.0.1:7077
+1. To get tmux run:
+   
+   ```shell
+   brew install tmux
    ```
 
-3. Start a second worker in another new terminal.
+2. To start a new tmux session run:
+   ```shell
+   tmux new -s [session_name]
+   ```
 
-4. Attach an IPython Notebook to the master by running the following:
-  
-   ```bash
-   IPYTHON_OPTS="notebook" \
-   ${SPARK_HOME}/bin/pyspark \
-   --master spark://127.0.0.1:7077 \
-   --executor-memory 1G \
-   --driver-memory 1G
+3. To detach a tmux session use:
+   ```shell
+   ctrl+b, d
+   ```
+
+4. To get a list of your current tmux sessions run:
+   ```shell
+   tmux ls
+   ```
+
+5. To attach an existing session run:
+   ```shell
+   tmux attach -t [session_name]
    ```
 
 <br>
 
-Here we will be dealing with airport data and we would want to identify airports with the worst / least delay.
+Now we can use `tmux` to create a local cluster (master and workers) which will be running in terminals in the background. 
+
+1. Start a tmux session which will host your master node:
+   ```shell
+   tmux new -s master
+   ```
+2. Run the following command to set up the Spark master to listen on local IP. The Master class in 
+   `org.apache.spark.deploy.master` accepts the following parameters
+   
+   - h : host (which on our case is local host 127.0.0.1) 
+   - p: The port on which the master is listening in (7077)
+   - webui-port: The port on which the webui is reachable (8080)
+
+   ```shell
+   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.master.Master -h 127.0.0.1 -p 7077 --webui-port 8080
+   ```
+3. You should get some output in your terminal similar to the following:
+   ![master_term](https://github.com/zipfian/spark/blob/master/images/master_term.png)
+
+4. Detach from your master session(`crtl+b, d`). Start a new tmux session:
+   
+   ```shell
+   tmux new -s worker1
+   ```
+
+5. Start a worker by running the following:
+
+   ```shell
+   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker spark://127.0.0.1:7077 -c 1 -m 1G
+   ```
+   
+   This will start a worker with 1GB memory and 1 core and attach it to the previously created Spark master. 
+   The output in your terminal should be:
+   
+   ![worker_term](https://github.com/zipfian/spark/blob/master/images/worker_term.png)
+
+   Detach the current session and create a new session and run the same command to create a second worker. 
+
+6. You have set up a master with 2 workers locally. Spark also provides us with a web UI that lets us track the Spark
+   jobs and see other stats about any Spark related tasks and workers. 
+
+   **Your web UI is at: `localhost:8080`**
+
+   ![sparkui_first](https://github.com/zipfian/spark/blob/master/images/sparkui_first.png)
+
+7. We are not running any applications with our local Spark cluster yet. We can attach an IPython notebook to the 
+   master and start `pyspark` by running the following command which starts the notebook in the browser
+   and assigns 1G of RAM per executor to the pyspark application.
+   
+   ```shell
+   IPYTHON_OPTS="notebook"  ${SPARK_HOME}/bin/pyspark --master spark://127.0.0.1:7077 --executor-memory 1G --driver-memory 1G
+   ```
+
+8. Now if you refresh your spark web UI, you should see PySparkShell running in the list of applications. 
+   
+   ![running_application](https://github.com/zipfian/spark/blob/master/images/running_application.png)
+
+9. A SparkContext is already loaded when PySparkShell is running. Access the SparkContext with the variable `sc`.
+
+   You will see an output like below:
+
+   ```python
+   sc
+   pyspark.context.SparkContext at 0x104318250
+    ```
+<br>
+
+##Part 4: Spark for Data Processing 
+
+Using the cluster we have set up in `Part 3`, we will be dealing with airport data and we would want to identify
+airports with the worst / least delay.
  
 **2 types of delays:**
 
@@ -137,14 +204,16 @@ Here we will be dealing with airport data and we would want to identify airports
 - `ARR_DELAY` is associated with the destination airport (`DEST_AIRPORT_ID`)
 - `DEP_DELAY` is associated with the destination airport (`ORIGIN_AIRPORT_ID`)
 
-1. Access the Spark-UI at `localhost:8080` and follow [this](`sparkui.md`) guide to get started navigating around 
-   the UI. The guide will bring you through using the UI for `2.` and `3.`.   
+<br>
+
+1. Read [sparkui.md](sparkui.md) for further guide as to how to use the UI. The guide will bring you through
+   `2.` and `3.`.
 
 2. Load the file in as follow.
 
    ```python
    # DON'T INCLUDE THE '[' AND ']'
-   link = s3n://<YOUR_AWS_ACCESS_KEY_ID>:<YOUR_AWS_SECRET_ACCESS_KEY>@mortar-example-data/airline-data
+   link = s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@mortar-example-data/airline-data
    airline = sc.textFile(link)
    ```
    
