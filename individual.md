@@ -229,7 +229,7 @@ airports with the worst / least delay.
 
    ```python
    # DON'T INCLUDE THE '[' AND ']'
-   link = s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@mortar-example-data/airline-data
+   link = 's3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@mortar-example-data/airline-data'
    airline = sc.textFile(link)
    ```
    
