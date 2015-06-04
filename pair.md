@@ -3,7 +3,9 @@
 Here we are going to run some Machine Learning Algorithms using MLlib, the Machine Learning library for Spark.
 We are going to build a Naive Bayes model to predict the category of the newsgroup article based on it content.
 
-1. Import these libraries
+<br>
+
+1. Start a local cluster just as you have done this morning and import these libraries
 
    ```python
    import string
@@ -15,8 +17,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
    from collectons import Counter
    ```
 
-2. Start a local cluster just as you have done this morning. Load the text file into an RDD. Map the lines
-   to dictionaries. Take the first 2 lines to confirm your results.
+2. Load the text file into an RDD. Map the lines to dictionaries. Take the first 2 lines to confirm your results.
 
    ```python
    data_raw = sc.textFile('s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@newsgroup/news.txt')
@@ -90,7 +91,11 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
    here.
    
 11. Map the `predict()` function of the `NaiveBayes` model onto the test set features to get
-   predictions. Caculate the accuracy of the predictions.
+   predictions. Caculate the accuracy of the predictions. Your accuracy should be above 80%.
+   
+   If this taking too long. Reference the time line of my runtime shown below.
+   
+   ![image](images/log.png)
 
 12. Examine the predictions that are incorrect. Use the dictionary you have created in `3.` to get
     the `label_name` of those predictions. Examine the content of the incorrect predictions and
@@ -101,10 +106,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
 
 14. To make prediction of new data, write a standalone python script that would take the file name
     of the file containing the new articles as a command line argument (use `argparse`). 
-    
-    At this point, you are just write Python and has nothing to do with Spark. This is just good Python practice 
-    for you.
-    
+        
     The script should do the following:
     - Read and preprocess the new data (`data/news_test.pkl`)
     - Preprocessing must be the same as you have done to build the model above
