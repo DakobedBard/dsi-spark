@@ -102,27 +102,27 @@ guide to tmux.
 
 1. To get tmux run:
    
-   ```shell
+   ```bash
    brew install tmux
    ```
 
 2. To start a new tmux session run:
-   ```shell
+   ```bash
    tmux new -s [session_name]
    ```
 
 3. To detach a tmux session use:
-   ```shell
+   ```bash
    ctrl+b, d
    ```
 
 4. To get a list of your current tmux sessions run:
-   ```shell
+   ```bash
    tmux ls
    ```
 
 5. To attach an existing session run:
-   ```shell
+   ```bash
    tmux attach -t [session_name]
    ```
 
@@ -131,7 +131,8 @@ guide to tmux.
 Now we can use `tmux` to create a local cluster (master and workers) which will be running in terminals in the background. 
 
 1. Start a tmux session which will host your master node:
-   ```shell
+
+   ```bash
    tmux new -s master
    ```
 2. Run the following command to set up the Spark master to listen on local IP. The Master class in 
@@ -140,8 +141,10 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
    - `h` : host (which on our case is local host `127.0.0.1`) 
    - `p`: The port on which the master is listening in (`7077`)
    - `webui-port`: The port on which the webui is reachable (`8080`)
+   
+   <br>
 
-   ```shell
+   ```bash
    ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.master.Master\
    -h 127.0.0.1\
    -p 7077\
@@ -152,13 +155,13 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
 
 4. Detach from your master session(`crtl+b, d`). Start a new tmux session:
    
-   ```shell
+   ```bash
    tmux new -s worker1
    ```
 
 5. Start a worker by running the following:
 
-   ```shell
+   ```bash
    ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker spark://127.0.0.1:7077 \
    -c 1 \
    -m 1G
@@ -180,24 +183,29 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
 
 7. We are not running any applications with our local Spark cluster yet. We can attach an IPython notebook to the 
    master and start `pyspark` by running the following command which starts the notebook in the browser
-   and assigns 1G of RAM per executor to the pyspark application.
+   and assigns 1G of RAM per executor and 1G of RAM to the master in pyspark application.
    
-   ```shell
-   IPYTHON_OPTS="notebook"  ${SPARK_HOME}/bin/pyspark --master spark://127.0.0.1:7077 --executor-memory 1G --driver-memory 1G
+   ```bash
+   IPYTHON_OPTS="notebook"  ${SPARK_HOME}/bin/pyspark \
+   --master spark://127.0.0.1:7077 \
+   --executor-memory 1G \
+   --driver-memory 1G
    ```
 
-8. Now if you refresh your spark web UI, you should see **`PySparkShell`** running in the list of applications. 
-   
-   ![running_application](https://github.com/zipfian/spark/blob/master/images/running_application.png)
-
-9. A SparkContext is already loaded when PySparkShell is running. Access the SparkContext with the variable `sc`.
+8. A SparkContext is already loaded into IPython. Access the SparkContext with the variable `sc`.
 
    You will see an output like below:
 
    ```python
    sc
    pyspark.context.SparkContext at 0x104318250
-    ```
+   ```
+
+9. Now if you refresh your spark web UI, you should see **`PySparkShell`** running in the list of applications. 
+   
+  ![running_application](https://github.com/zipfian/spark/blob/master/images/running_application.png)
+
+ 
 <br>
 
 ##Part 4: Spark for Data Processing 
@@ -229,9 +237,11 @@ airports with the worst / least delay.
    the corresponding data. Also run a `.count()` on the RDD. This will **take a while** as the data set is
    a few million rows. 
 
-3. As you can see `.count()` takes a long time to run. It's a common practice to sub-sample your data when writing your code so you don't have to wait for different commands to run. You can use `.take(100)` to sample out the first 100 rows and assign it to a new RDD using `sc.parallelize`.
+3. As you can see `.count()` takes a long time to run. It's a common practice to sub-sample your data when writing
+   your code so you don't have to wait for different commands to run. You can use `.take(100)` to sample out the
+   first 100 rows and assign it to a new RDD using `sc.parallelize`.
 
-3. Let's do some preprocessing. Remove the `'`, `"` and the trailing `,` for each line. Print the first 2 lines
+4. Let's do some preprocessing. Remove the `'`, `"` and the trailing `,` for each line. Print the first 2 lines
    to confirm. The first 2 lines should look like the following.
    
    ```
@@ -239,10 +249,10 @@ airports with the worst / least delay.
    2012,4,AA,12478,12892,-4.00,0.00,-21.00,0.00,0.00
    ```
   
-4. Use `filter` to filter out the line containing the column names. 
+5. Use `filter` to filter out the line containing the column names. 
 
 
-5. Make a function, `make_rows()`, that takes a line as an argument and return a dictionary
+6. Make a function, `make_rows()`, that takes a line as an argument and return a dictionary
    where the keys are the column names and the values are the values for the column. 
    
    - The output is a dictionary with only these columns:
@@ -255,20 +265,20 @@ airports with the worst / least delay.
      
    Map `make_rows()` to the RDD and you should have an RDD where each item is a dictionary.
    
-6. Instead of dictionaries, make 2 RDDs where the items are tuples.
+7. Instead of dictionaries, make 2 RDDs where the items are tuples.
    The first RDD will contain tuples `(DEST_AIRPORT_ID, ARR_DELAY)`. 
    The other RDD will contain `(ORIGIN_AIRPORT_ID, DEP_DELAY)`.
    Run a `.first()` or `.take()` to confirm your results.
 
-7. Make 2 RDDs for the mean delay time for origin airports and destination airports. You will need 
+8. Make 2 RDDs for the mean delay time for origin airports and destination airports. You will need 
    to `groupByKey()` and then take the mean of the delay times for the particular airport. 
    Use the PySpark [docs](http://spark.apache.org/docs/latest/api/python/pyspark.html#module-pyspark).
 
-8. Run `rdd.persist()` on the RDDs you made in in `8.`. That will cache the RDDs so they do not
+9. Run `rdd.persist()` on the RDDs you made in in `8.`. That will cache the RDDs so they do not
    need to be reproduced every time they are called upon. Use `persist()` for RDDs that you are 
    going to repeatedly use.
 
-9. Use `rdd.sortBy()` to sort the RDDs by the mean delay time to answer the following questions.
+10. Use `rdd.sortBy()` to sort the RDDs by the mean delay time to answer the following questions.
 
     - Top 10 departing airport that has least avgerage delay in minutes
     - Top 10 departing airport that has most avgerage delay in minutes
