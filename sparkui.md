@@ -13,7 +13,7 @@ brew install tmux
 
 To start a new tmux session run:
 ```shell
-tmux new -s *session_name*
+tmux new -s [session_name]
 ```
 
 To detach a tmux session use:
@@ -28,7 +28,7 @@ tmux ls
 
 To attach an existing session run:
 ```shell
-tmux attach -t *session_name*
+tmux attach -t [session_name]
 ```
 
 ## Creating Spark master and worker with tmux
@@ -44,7 +44,7 @@ and run the following command to set up the Spark master to listen on local IP. 
 ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.master.Master -h 127.0.0.1 -p 7077 --webui-port 8080
 ```
 You should get some output in your terminal similar to the following:
-[master_term](ADD LINK)
+![master_term](https://github.com/zipfian/spark/blob/master/images/master_term.png)
 
 ## Creating 2 Spark workers with tmux
 Detach from your master session(`crtl+b, d`). Start a new tmux session:
@@ -56,19 +56,19 @@ Start a worker by running the following:
 ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker spark://127.0.0.1:7077 -c 1 -m 1G
 ```
 This will start a worker with 1GB memory and 1 core and attach it to the previously created Spark master. The output in your terminal should be:
-[worker_term](ADD LINK)
+![worker_term](https://github.com/zipfian/spark/blob/master/images/worker_term.png)
 Detach the current session and create a new session and run the same command to create a second worker. 
 
 You have set up a master with 2 workers locally. Spark also provides us with a web UI that lets us track the Spark jobs and see other stats about any Spark related tasks and workers. 
 Your web UI is at: `localhost:8080`
-[sparkui_first](ADD LINK)
+![sparkui_first](https://github.com/zipfian/spark/blob/master/images/sparkui_first.png)
 
 We are not running any applications with our local Spark cluster yet. We can attach an Ipython notebook to the master and start `pyspark` by running the following command which starts the notebook in the browser and assigns 1G of RAM per executor to the pyspark application.
 ```shell
 IPYTHON_OPTS="notebook"  ${SPARK_HOME}/bin/pyspark --master spark://127.0.0.1:7077 --executor-memory 1G --driver-memory 1G
 ```
 Now if you refresh your spark web UI, you should see PySparkShell running in the list of applications. 
-[running_application](ADD LINK)
+![running_application](https://github.com/zipfian/spark/blob/master/images/running_application.png)
 
 A SparkContext is already loaded when PySparkShell is running. Access the SparkContext with the variable `sc`.
 You will see an output like below:
@@ -79,7 +79,7 @@ pyspark.context.SparkContext at 0x104318250
 
 In the UI, if you click on PySparkShell (in the list of applications) You'd be routed to the following page: 
 
-[pysparkshell_page](ADD LINK)
+![pysparkshell_page](https://github.com/zipfian/spark/blob/master/images/pysparkshell_page.png)
 
 Click on the **Application Detail UI** and you see the Spark Jobs page which contains detailed execution information for active and recently completed Spark jobs. (We don't see any jobs since we haven't run any jobs yet) As we go through this exercise, we want to monitor our Spark jobs.
 
@@ -92,7 +92,7 @@ Run a `count()` on the airline data which is a Spark job. This will take a whil
 When `count()` is running go back to the Spark Jobs page and refresh.
 You should see the count running as an active job. 
 
-[count_job](ADD LINK)
+![count_job](https://github.com/zipfian/spark/blob/master/images/count_job.png)
 
 
 
