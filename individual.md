@@ -3,6 +3,8 @@
 Here we will get familiar with the basics of Spark (PySpark). We will be just using a master/driver node.
 In `Part 3`, we are going simulate a master-worker cluster to run our jobs.
 
+<br>
+
 1. Initiate a `SparkContext`. A `SparkContext` specifies where your
    cluster is, i.e. the resources for all your distributed computation. Specify your `SparkContext`
    as follows.
@@ -95,8 +97,8 @@ in the RDD.
 Here we will simulate starting a master/worker cluster locally. That allows us to develop code on a local cluster
 before deployment. We will be using [`tmux`](http://tmux.sourceforge.net/) to run our scripts in the background .
 `tmux` lets us *multiplex* your terminal, create terminal sessions, and attach/detach 
-different programs in the terminal (somewhat like running processes in hidden terminals). Below is just a quick
-guide to tmux.
+different programs in the terminal (somewhat like running processes in hidden terminals). **Below is just a quick
+guide to tmux for you to skim through.**
 
 <br>
 
@@ -130,6 +132,8 @@ guide to tmux.
 
 Now we can use `tmux` to create a local cluster (master and workers) which will be running in terminals in the background. 
 
+<br>
+
 1. Start a tmux session which will host your master node:
 
    ```bash
@@ -162,9 +166,10 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
 5. Start a worker by running the following:
 
    ```bash
-   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker spark://127.0.0.1:7077 \
+   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker \
    -c 1 \
-   -m 1G
+   -m 1G \
+   spark://127.0.0.1:7077 \
    ```
    
    This will start a worker with 1GB memory and 1 core and attach it to the previously created Spark master. 
