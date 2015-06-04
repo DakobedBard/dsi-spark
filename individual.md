@@ -227,7 +227,7 @@ airports with the worst / least delay.
 
 <br>
 
-1. Read [sparkui.md](sparkui.md) for further guide as to how to use the UI. The guide will bring you through
+1. Read [**sparkui.md**](sparkui.md) for further guide as to how to use the UI. The guide will bring you through
    `2.` and `3.`.
 
 2. Load the file in as follow.
