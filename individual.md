@@ -95,7 +95,10 @@ in the RDD.
 Here we will simulate starting a master/worker cluster locally. That allows us to develop code on a local cluster
 before deployment. We will be using [`tmux`](http://tmux.sourceforge.net/) to run our scripts in the background .
 `tmux` lets us *multiplex* your terminal, create terminal sessions, and attach/detach 
-different programs in the terminal (somewhat like running processes in hidden terminals).
+different programs in the terminal (somewhat like running processes in hidden terminals). Below is just a quick
+guide to tmux.
+
+<br>
 
 1. To get tmux run:
    
@@ -134,12 +137,15 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
 2. Run the following command to set up the Spark master to listen on local IP. The Master class in 
    `org.apache.spark.deploy.master` accepts the following parameters
    
-   - h : host (which on our case is local host 127.0.0.1) 
-   - p: The port on which the master is listening in (7077)
-   - webui-port: The port on which the webui is reachable (8080)
+   - `h` : host (which on our case is local host `127.0.0.1`) 
+   - `p`: The port on which the master is listening in (`7077`)
+   - `webui-port`: The port on which the webui is reachable (`8080`)
 
    ```shell
-   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.master.Master -h 127.0.0.1 -p 7077 --webui-port 8080
+   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.master.Master\
+   -h 127.0.0.1\
+   -p 7077\
+   --webui-port 8080
    ```
 3. You should get some output in your terminal similar to the following:
    ![master_term](https://github.com/zipfian/spark/blob/master/images/master_term.png)
@@ -153,7 +159,9 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
 5. Start a worker by running the following:
 
    ```shell
-   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker spark://127.0.0.1:7077 -c 1 -m 1G
+   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker spark://127.0.0.1:7077 \
+   -c 1 \
+   -m 1G
    ```
    
    This will start a worker with 1GB memory and 1 core and attach it to the previously created Spark master. 
