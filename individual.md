@@ -85,7 +85,8 @@ in the RDD.
    **Hint:**
    - `rdd.values()` returns another RDD of all the values
    - Use `reduce()` to return the sum of all the values
-      
+
+<br>
    
 ##Part 3: Processing Data with Spark
 
@@ -111,8 +112,11 @@ before deployment.
 
 3. Start a second worker in another new terminal.
 
-<br>
+4. Attach an IPython Notebook to the master by running the following:
+  
+   ```
 
+<br>
 
 Here we will be dealing with airport data and we would want to identify airports with the worst / least delay.
  
@@ -123,7 +127,7 @@ Here we will be dealing with airport data and we would want to identify airports
 - `ARR_DELAY` is associated with the destination airport (`DEST_AIRPORT_ID`)
 - `DEP_DELAY` is associated with the destination airport (`ORIGIN_AIRPORT_ID`)
 
-1. Start a new notebook and make a new `SparkContext`. There could only be one Spark instance
+1. Now we have  There could only be one Spark instance
    per Python instance. Load the file as follow.
 
    ```python
