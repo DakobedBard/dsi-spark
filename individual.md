@@ -65,6 +65,8 @@ in the RDD.
 
 **If you are not sure what RDD transformations/actions there are, check out [http://spark.apache.org/docs/0.7.3/api/pyspark/pyspark.rdd.RDD-class.html](http://spark.apache.org/docs/0.7.3/api/pyspark/pyspark.rdd.RDD-class.html)**
 
+<br>
+
 1. Turn the items in `file_rdd` into `(key, value)` pairs using `map()` and a `lambda` function. Map each item into    a json object (use `json.loads`) and then map to the `(key, value)` pairs. **Remember to cast value as type**  
    `int`.  Use `collect()` to see your results. Using `collect()` is fine here since the data is small.
    
@@ -93,6 +95,8 @@ in the RDD.
 Here we will simulate starting a master/worker cluster locally. That allows us to develop code on a local cluster
 before deployment. 
 
+<br>
+
 1. Start a master node by running the below in a terminal:
 
    ```bash
@@ -114,6 +118,12 @@ before deployment.
 
 4. Attach an IPython Notebook to the master by running the following:
   
+   ```bash
+   IPYTHON_OPTS="notebook" \
+   ${SPARK_HOME}/bin/pyspark \
+   --master spark://127.0.0.1:7077 \
+   --executor-memory 1G \
+   --driver-memory 1G
    ```
 
 <br>
@@ -127,11 +137,13 @@ Here we will be dealing with airport data and we would want to identify airports
 - `ARR_DELAY` is associated with the destination airport (`DEST_AIRPORT_ID`)
 - `DEP_DELAY` is associated with the destination airport (`ORIGIN_AIRPORT_ID`)
 
-1. Now we have  There could only be one Spark instance
-   per Python instance. Load the file as follow.
+1. Access the Spark-UI at `localhost:8080` and follow [this](`sparkui.md`) guide to get started navigating around 
+   the UI. The guide will bring you through using the UI for `2.` and `3.`.   
+
+2. Load the file in as follow.
 
    ```python
-   # DON'T INCLUDE THE '<' AND '>'
+   # DON'T INCLUDE THE '[' AND ']'
    link = s3n://<YOUR_AWS_ACCESS_KEY_ID>:<YOUR_AWS_SECRET_ACCESS_KEY>@mortar-example-data/airline-data
    airline = sc.textFile(link)
    ```
