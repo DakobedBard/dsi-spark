@@ -27,5 +27,8 @@ If you want to install PySpark on your laptop
 
 9. Now open up an ipython terminal and `import pyspark as ps`. If it did not throw an error,
    then you are ready to go.
-   
+
+10. You might have download the newest version of 
+    [`JDK`](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if
+    PySpark is throwing errors about Java.
 
