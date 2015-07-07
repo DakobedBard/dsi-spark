@@ -170,7 +170,7 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
    ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker \
    -c 1 \
    -m 1G \
-   spark://127.0.0.1:7077 \
+   spark://127.0.0.1:7077
    ```
    
    This will start a worker with 1GB memory and 1 core and attach it to the previously created Spark master. 
