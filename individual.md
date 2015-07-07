@@ -150,9 +150,9 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
    <br>
 
    ```bash
-   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.master.Master\
-   -h 127.0.0.1\
-   -p 7077\
+   ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.master.Master \
+   -h 127.0.0.1 \
+   -p 7077 \
    --webui-port 8080
    ```
 3. You should get some output in your terminal similar to the following:
@@ -277,12 +277,12 @@ airports with the worst / least delay.
    Run a `.first()` or `.take()` to confirm your results.
 
 8. Make 2 RDDs for the mean delay time for origin airports and destination airports. You will need 
-   to `groupByKey()` and then take the mean of the delay times for the particular airport. 
-   Use the PySpark [docs](http://spark.apache.org/docs/latest/api/python/pyspark.html#module-pyspark).
+   to `reduceByKey()` and then take the mean of the delay times for the particular airport. 
 
 9. Run `rdd.persist()` on the RDDs you made in in `8.`. Remember to set the name of the RDD using `.setName()`
-   before running `persist()`.  That will cache the RDDs so they do not need to be reproduced every time they are
-   called upon. Use `persist()` for RDDs that you are going to repeatedly use.
+   before running `persist()` (e.g. `rdd.setName('airline_rdd').persist()`). Setting the name will allow you to 
+   identify the RDD in the Spark UI. That will cache the RDDs so they do not need to be reproduced every time 
+   they are called upon. Use `persist()` for RDDs that you are going to repeatedly use.
 
 10. Use `rdd.sortBy()` to sort the RDDs by the mean delay time to answer the following questions.
 
