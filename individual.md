@@ -183,7 +183,7 @@ Now we can use `tmux` to create a local cluster (master and workers) which will 
 6. You have set up a master with 2 workers locally. Spark also provides us with a web UI that lets us track the Spark
    jobs and see other stats about any Spark related tasks and workers. 
 
-   **Your web UI is at: `localhost:8080`**
+   ##Your web UI is at: `localhost:8080`
 
    ![sparkui_first](https://github.com/zipfian/spark/blob/master/images/sparkui_first.png)
 
