@@ -1,13 +1,9 @@
-##Spark Day 1
+##Goals
 
-Today we will explore the value of using the distributed computing framework Spark. 
-In most cases, Python is not feasible for processing big data. And in terms of distributed
-systems out there, Spark's in-memory primitives provide performance up to 
-[100 times faster](https://amplab.cs.berkeley.edu/wp-content/uploads/2013/02/shark_sigmod2013.pdf)
-than Hive and other Hadoop systems in performing distributed machine learning tasks. 
+- Understanding of general distributed systems concepts and Hadoop File System (HDFS)
+- Appreciate the difference between Spark and Hadoop MapReduce
+- Practice Functional Programming in Spark
+- Use of RDDs in Spark
+- Experience with Spark MLlib API (Naive Bayes and Word2Vec)
 
-Toady we will get familiar with the Spark environment using the Python API, PySpark. We would
-run things locally using PySpark and tomorrow we will move on running Spark jobs in EC2 instances
-in the cloud.
-
-**Lecture slides: [here](https://drive.google.com/file/d/0B_1ScIZP4KcueldFV1UyOEdURGs/view?usp=sharing)**
+**Consistent with Spark 1.2.1**
