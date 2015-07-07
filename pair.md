@@ -20,7 +20,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
 2. Load the text file into an RDD. Map the lines to dictionaries. Take the first 2 lines to confirm your results.
 
    ```python
-   data_raw = sc.textFile('s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@newsgroup/news.txt')
+   data_raw = sc.textFile('s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@sparkdatasets/news.txt')
    ```
    
 3. Check how many partitions are in you RDD by `getNumPartitions`. If it is too low (i.e. 2), you might want
@@ -101,20 +101,6 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
     the `label_name` of those predictions. Examine the content of the incorrect predictions and
     try to reason why the content is incorrectly predicted.
 
-13. Save your model as a pickle file. This will allow you to use the model make prediction about the 
-    label of new articles.
-
-14. To make prediction of new data, write a standalone python script that would take the file name
-    of the file containing the new articles as a command line argument (use `argparse`). 
-        
-    The script should do the following:
-    - Read and preprocess the new data (`data/news_test.pkl`)
-    - Preprocessing must be the same as you have done to build the model above
-    - Put the new data in an RDD
-    - Find the 20 most common words in each article
-    - Unpickle your model and make predictions for the label of the article
-    - Write out a file with the predicted labels and the most common words 
-
 <br>
 
 ##Extra Credit: Word2Vec
@@ -130,7 +116,7 @@ in a feed-forward neural network which has been shown to better represent the co
 1. To train a Word2Vec model, we need training data. Load in the data as follows:
 
    ```python
-   data = sc.textFile('s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@jyt109/word2vec/text8_lines')
+   data = sc.textFile('s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@sparkdatasets/text8_lines')
    ```
    
 2. Import and instantiate a Word2Vec() class. 
