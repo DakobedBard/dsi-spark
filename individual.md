@@ -84,9 +84,7 @@ are running properly.**
    
    **Hint:** 
    - Use `reduceByKey()` instead of `groupByKey()`. See why [here](https://github.com/databricks/spark-knowledgebase/blob/master/best_practices/prefer_reducebykey_over_groupbykey.md)
-   - You will see a `pyspark.resultiterable.ResultIterable` returned. It has a `.data` attribute 
-     which you can use to access the Python list
- 
+
 4. Calculate the total revenue from people buying cookies.
 
    **Hint:**
