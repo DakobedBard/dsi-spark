@@ -41,13 +41,13 @@ By the end of this lecture, you will be able to:
 Spark Version History
 ---------------------
 
-Date                Version         Changes
-----                -------         -------
-May 30, 2014        Spark 1.0.0     APIs stabilized 
-September 11, 2014  Spark 1.1.0     New functions in MLlib, Spark SQL
-December 18, 2014   Spark 1.2.0     Python Streaming API and better streaming fault tolerance
-March 13, 2015      Spark 1.3.0     DataFrame API, Kafka integration in Streaming
-April 17, 2015      Spark 1.3.1     Bug fixes, minor changes
+Date               |Version        |Changes
+----               |-------        |-------
+May 30, 2014       |Spark 1.0.0    |APIs stabilized 
+September 11, 2014 |Spark 1.1.0    |New functions in MLlib, Spark SQL
+December 18, 2014  |Spark 1.2.0    |Python Streaming API and better streaming fault tolerance
+March 13, 2015     |Spark 1.3.0    |DataFrame API, Kafka integration in Streaming
+April 17, 2015     |Spark 1.3.1    |Bug fixes, minor changes
 
 Matei Zaharia
 -------------
@@ -981,32 +981,237 @@ Q: What are the pros and cons of `reduceByKey` vs `groupByKey`?
 5. For this reason `groupByKey` can be easier to program with.
 </details>
 
+
+Joins
+-----
+
+Q: Given a table of employees and locations find the cities that the
+employees live in.
+
+
+- The easiest way to do this is with a `join`.
+
+        # Employees: emp_id, loc_id, name
+        employee_data = [
+            (101, 014, 'Alice'),
+            (102, 015, 'Bob'),
+            (103, 014, 'Chad'),
+            (104, 015, 'Jen'),
+            (105, 013, 'Dee') ]
+
+        # Locations: loc_id, location
+        location_data = [
+            (014, 'SF'),
+            (015, 'Seattle'),
+            (016, 'Portland')]
+
+        employees = sc.parallelize(employee_data)
+        locations = sc.parallelize(location_data)
+
+        # Re-key employee records with loc_id
+        employees2 = employees.map(lambda (emp_id,loc_id,name):(loc_id,name));
+
+        # Now join.
+        employees2.join(locations).collect()
+
+Pop Quiz
+--------
+
+<details><summary>
+Q: How can we keep employees that don't have a valid location ID in
+the final result?
+</summary>
+1. Use `leftOuterJoin` to keep employees without location IDs.
+<br>
+2. Use `rightOuterJoin` to keep locations without employees. 
+<br>
+3. Use `fullOuterJoin` to keep both.
+<br>
+</details>
+
+
+Caching and Persistence
+=======================
+
+RDD Caching
+-----------
+
+- Consider this Spark job.
+
+        max = 100000
+        %time rdd1 = sc.parallelize(xrange(max))
+        %time rdd2 = rdd1.map(lambda x:x*x)
+
+- Until we execute an action the RDDs do nothing.
+
+- Now lets force execution of the RDD by calling an action on it.
+
+        %time c = rdd2.count()
+
+- Notice that Spark is not caching `rdd1` or `rdd2`.
+
+- The RDD does no work until an action is called. And then when an
+  action is called it figures out the answer and then throw away all
+  the data.
+
+- If you have an RDD that you are going to reuse in your computation
+  you can use `cache()` to make Spark cache the RDD.
+
+RDD Caching
+-----------
+
+Q: Repeat the previous computation with cache enabled on the RDDs.
+
+- Set up the RDDs.
+
+        max = 100000
+        rdd1 = sc.parallelize(xrange(max))
+        rdd2 = rdd1.map(lambda x:x*x)
+
+- Enable caching on `rdd1`.
+
+        rdd1.cache();
+
+- Observe the performance.
+
+        %time rdd2.count()
+
+- Enable caching on `rdd2`.
+
+        rdd2.cache();
+
+- Observe the performance.
+
+        %time rdd2.count()
+
+Notes
+-----
+
+- Calling `cache()` flips a flag on the RDD. 
+
+- The data is not cached until an action is called.
+
+- You can uncache an RDD using `unpersist()`.
+
+Pop Quiz
+--------
+
+<details><summary>
+Q: Will `unpersist` uncache the RDD immediately or does it wait for an
+action?
+</summary>
+It unpersists immediately.
+</details>
+
+Caching and Persistence
+-----------------------
+
+Q: Persist RDD to disk instead of caching it in memory.
+
+- You can cache RDDs at different levels.
+
+- Here is an example.
+
+        import pyspark
+        rdd = sc.parallelize(xrange(100))
+        rdd.persist(pyspark.StorageLevel.DISK_ONLY)
+
+Pop Quiz
+--------
+
+<details><summary>
+Q: Will the RDD be stored on disk at this point?
+</summary>
+No. It will get stored after we call an action.
+</details>
+
+Persistence Levels
+------------------
+
+Level                       Meaning
+-----                       -------
+`MEMORY_ONLY`               Same as `cache()`
+`MEMORY_AND_DISK`           Cache in memory then overflow to disk
+`MEMORY_AND_DISK_SER`       Like above; in cache keep objects serialized instead of live 
+`DISK_ONLY`                 Cache to disk not to memory
+
+Notes
+-----
+
+- `MEMORY_AND_DISK_SER` is a good compromise between the levels. 
+
+- Fast, but not too expensive.
+
+- Make sure you unpersist when you don't need the RDD any more.
+
+
+Spark Performance
+=================
+
+Narrow and Wide Transformations
+-------------------------------
+
+- Spark transformations are *narrow* if each RDD has one unique child
+  past the transformation.
+
+- Spark transformations are *wide* if each RDD can have multiple
+  children past the transformation.
+
+- Narrow transformations are map-like, while wide transformations are
+  reduce-like.
+
+- Narrow transformations are faster because they do move data between
+  executors, while wide transformations are slower.
+ 
+Repartitioning
+--------------
+
+- Over time partitions can get skewed. 
+
+- Or you might have less data or more data than you started with.
+
+- You can rebalance your partitions using `repartition` or `coalesce`.
+
+- `coalesce` is narrow while `repartition` is wide.
+
+Pop Quiz
+--------
+
+<details><summary>
+Between `coalesce` and `repartition` which one is faster? Which one is
+more effective?
+</summary>
+1. `coalesce` is narrow so it is faster. 
+<br>
+2. However, it only combines partitions and does not shuffle them.
+<br>
+3. `repartition` is wide but it partitions more effectively because it
+   reshuffles the records.
+</details>
+
+Misc
+====
+
+Amazon S3
+---------
+
+- *"s3:" URLs break when Secret Key contains a slash, even if encoded*
+    <https://issues.apache.org/jira/browse/HADOOP-3733>
+
+- *Spark 1.3.1 / Hadoop 2.6 prebuilt pacakge has broken S3 filesystem access*
+    <https://issues.apache.org/jira/browse/SPARK-7442>
+
 <!--
-
-Find Highest Revenue State
-
-Cache and Persist
-
-Checkpoint
-
-Narrow vs Wide Operations
-
-Partitions
 
 Broadcast Variables
 
 Accumulators
 
-x = sc.parallelize(xrange(10)).filter(lambda x: x % 2 == 0).collect()
+Checkpoint
 
-x = sc.parallelize([1,2,3,4,5,5,1,3]).distinct().collect()
+S3 key issue
 
-x = sc.parallelize([1,2,3,4,5,5,1,3]).mean()
-
-x = sc.parallelize([1,2,3,4,5,5,1,3]).mean()
-
-
-
+2.6
 
 -->
 
