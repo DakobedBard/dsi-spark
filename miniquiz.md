@@ -20,7 +20,7 @@ If you want to install PySpark on your laptop
 
    ```
    export SPARK_HOME=[path to your unzipped spark folder]
-   export PYTHONPATH=[path to your unzipped spark folder]python/:$PYTHONPATH
+   export PYTHONPATH=[path to your unzipped spark folder]/python/:$PYTHONPATH
    ```
 7. Run `source ~/.bashrc` in the terminal.
 8. Also install py4j by `sudo pip install py4j`
