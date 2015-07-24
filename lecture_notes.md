@@ -361,7 +361,7 @@ RDD Laziness
 
 - Q: What is this Spark job doing?
 
-        max = 100000
+        max = 10000000
         %time sc.parallelize(xrange(max)).map(lambda x:x+1).count()
 
 - Q: How is the following job different from the previous one? How
@@ -618,7 +618,7 @@ Q: What sequence of operations would we need to perform?
           .filter(lambda line: not line.startswith("#")) \
           .map(lambda line: line.split(",")) \
           .map(lambda fields: (float(fields[-1]),fields[0])) \
-          .sortBy(lambda (close, date): close, ascending=False)
+          .sortBy(lambda (close, date): close, ascending=False) \
           .take(1)
 
 - Here is the program for finding the high of any stock that stores
@@ -728,7 +728,6 @@ Q: Calculate revenue per state?
             .filter(lambda x: not x[0].startswith('#'))\
             .map(lambda x: (x[-3],float(x[-1])))\
             .collect()
-
 
 - Now use `reduceByKey` to add them up.
 
@@ -870,8 +869,10 @@ Argument Unpacking
 
 - Here is what `getCity` looks like with tuple indexing.
 
-    def badGetCity(client):
-        return client[2][1]
+        def badGetCity(client):
+            return client[2][1]
+
+        getCity(client)
 
 Argument Unpacking In Spark
 ---------------------------
@@ -993,17 +994,17 @@ employees live in.
 
         # Employees: emp_id, loc_id, name
         employee_data = [
-            (101, 014, 'Alice'),
-            (102, 015, 'Bob'),
-            (103, 014, 'Chad'),
-            (104, 015, 'Jen'),
-            (105, 013, 'Dee') ]
+            (101, 14, 'Alice'),
+            (102, 15, 'Bob'),
+            (103, 14, 'Chad'),
+            (104, 15, 'Jen'),
+            (105, 13, 'Dee') ]
 
         # Locations: loc_id, location
         location_data = [
-            (014, 'SF'),
-            (015, 'Seattle'),
-            (016, 'Portland')]
+            (14, 'SF'),
+            (15, 'Seattle'),
+            (16, 'Portland')]
 
         employees = sc.parallelize(employee_data)
         locations = sc.parallelize(location_data)
@@ -1038,51 +1039,34 @@ RDD Caching
 
 - Consider this Spark job.
 
-        max = 100000
-        %time rdd1 = sc.parallelize(xrange(max))
-        %time rdd2 = rdd1.map(lambda x:x*x)
+        import random
+        num_count = 500*1000
+        num_list = [random.random() for i in xrange(num_count)]
+        rdd1 = sc.parallelize(num_list)
+        rdd2 = rdd1.sortBy(lambda num: num)
 
-- Until we execute an action the RDDs do nothing.
+- Lets time running `count()` on `rdd2`.
 
-- Now lets force execution of the RDD by calling an action on it.
-
-        %time c = rdd2.count()
-
-- Notice that Spark is not caching `rdd1` or `rdd2`.
+        %time rdd2.count()
+        %time rdd2.count()
+        %time rdd2.count()
 
 - The RDD does no work until an action is called. And then when an
-  action is called it figures out the answer and then throw away all
+  action is called it figures out the answer and then throws away all
   the data.
 
 - If you have an RDD that you are going to reuse in your computation
   you can use `cache()` to make Spark cache the RDD.
 
-RDD Caching
------------
+- Lets cache it and try again.
 
-Q: Repeat the previous computation with cache enabled on the RDDs.
-
-- Set up the RDDs.
-
-        max = 100000
-        rdd1 = sc.parallelize(xrange(max))
-        rdd2 = rdd1.map(lambda x:x*x)
-
-- Enable caching on `rdd1`.
-
-        rdd1.cache();
-
-- Observe the performance.
-
+        rdd2.cache()
+        %time rdd2.count()
+        %time rdd2.count()
         %time rdd2.count()
 
-- Enable caching on `rdd2`.
-
-        rdd2.cache();
-
-- Observe the performance.
-
-        %time rdd2.count()
+- Caching the RDD speeds up the job because the RDD does not have to
+  be computed from scratch again.
 
 Notes
 -----
@@ -1128,12 +1112,12 @@ No. It will get stored after we call an action.
 Persistence Levels
 ------------------
 
-Level                       Meaning
------                       -------
-`MEMORY_ONLY`               Same as `cache()`
-`MEMORY_AND_DISK`           Cache in memory then overflow to disk
-`MEMORY_AND_DISK_SER`       Like above; in cache keep objects serialized instead of live 
-`DISK_ONLY`                 Cache to disk not to memory
+Level                      |Meaning
+-----                      |-------
+`MEMORY_ONLY`              |Same as `cache()`
+`MEMORY_AND_DISK`          |Cache in memory then overflow to disk
+`MEMORY_AND_DISK_SER`      |Like above; in cache keep objects serialized instead of live 
+`DISK_ONLY`                |Cache to disk not to memory
 
 Notes
 -----
