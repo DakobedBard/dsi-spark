@@ -14,7 +14,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
    from pyspark.mllib.feature import HashingTF
    from pyspark.mllib.regression import LabeledPoint
    from pyspark.mllib.classification import NaiveBayes
-   from collectons import Counter
+   from collections import Counter
    ```
 
 2. Load the text file into an RDD. Map the lines to dictionaries. Take the first 2 lines to confirm your results.
