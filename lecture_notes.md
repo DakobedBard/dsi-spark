@@ -106,9 +106,13 @@ Q: How can I make Spark logging less verbose?
 - By default Spark logs messages at the `INFO` level.
 
 - Here are the steps to make it only print out warnings and errors.
-    `cd $SPARK_HOME/conf`
-    `cp log4j.properties.template log4j.properties`
-    `sed -i.bak -e 's/rootCategory=INFO/rootCategory=ERROR/' log4j.properties`
+
+```sh
+cd $SPARK_HOME/conf
+cp log4j.properties.template log4j.properties
+```
+
+- Edit `log4j.properties` and replace `rootCategory=INFO` with `rootCategory=ERROR`
 
 Spark Fundamentals
 ==================
@@ -173,6 +177,7 @@ Spark Terminology
 
 Term                   |Meaning
 ----                   |-------
+RDD                    |*Resilient Distributed Dataset* or a distributed sequence of records
 Spark Job              |Sequence of transformations on data with a final action
 Spark Application      |Sequence of Spark jobs and other code
 Transformation         |Spark operation that produces an RDD
@@ -223,7 +228,7 @@ Q: Find all the primes less than 100.
             return True
 
 - Use this to filter out non-primes.
-        
+
         numbers = xrange(2,100)
         primes = sc.parallelize(numbers)\
             .filter(is_prime)\
