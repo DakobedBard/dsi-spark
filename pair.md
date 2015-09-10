@@ -42,7 +42,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
    Feel free to use `nltk`. Also feel free to wrap all of the functions in one big function and then map.
 
    - Lower casing the text
-   - Removing puntuations
+   - Removing punctuations
    - Removing stop words
    - Splitting on white spaces
    - Stem the tokenized words
@@ -65,9 +65,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
    - `.mapValues()`
    - `Counter()` (Python function)
    
-7. Use `HashingTF()` to get the word vector in order to confirm your implementation is correct. Your first row should
-   have a sum of 186 words. You cannot compare the actual word vec since `HashingTF()` would have mixed up the ordering
-   of the vocab.
+7. Use `HashingTF()` to get the word vector in order to confirm your implementation is correct. Your first row should have a sum of 186 words. You cannot compare the actual word vec since `HashingTF()` would have mixed up the ordering of the vocab.
    
       ```python
    ### Using HashingTF() ###
@@ -76,8 +74,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
    word_vec_rdd.count()
    ```
    
-   One advantage with your implementation is that you have access to the actual vocab itself where `HashingTF()` would 
-   have obscured the words by hashing them.
+   One advantage with your implementation is that you have access to the actual vocab itself where `HashingTF()` would have obscured the words by hashing them.
 
 8. Spark uses a `LabeledPoint(target, feature)` object to store the target (numeric)
    and features (numeric vector) for all machine learning algorithms. 
@@ -88,12 +85,12 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
 
 10. Train the `NaiveBayes` model on the train data set. See the 
    [docs](http://spark.apache.org/docs/1.2.0/api/python/pyspark.mllib.html#module-pyspark.mllib.classification)
-   here. The  `NaiveBayes` model is a Python class and once it is trained it can just be used as a Python class.
+   here. The  `NaiveBayes` model is a Python class, and once it is trained, it can just be used as a Python class.
    
 11. Map the `predict()` function of the `NaiveBayes` model onto the test set features to get
    predictions. Caculate the accuracy of the predictions. Your accuracy should be above 80%.
    
-   If this taking too long. Reference the time line of my runtime shown below.
+   If this is taking too long. Reference the timeline of my runtime shown below.
    
    ![image](images/log.png)
 
