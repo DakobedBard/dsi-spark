@@ -341,334 +341,6 @@ Map vs FlatMap
             .flatMap(lambda x: x.split()) \
             .collect()
 
-RDD Statistics
---------------
-
-Q: How would you calculate the mean, variance, and standard deviation of a sample
-produced by Python's `random()` function?
-
-- Create an RDD and apply the statistical actions to it.
-
-        count = 1000
-        list = [random.random() for _ in xrange(count)]
-        rdd = sc.parallelize(list)
-        print rdd.mean()
-        print rdd.variance()
-        print rdd.stdev()
-
-Pop Quiz
---------
-
-<details><summary>
-Q: What requirement does an RDD have to satisfy before you can apply
-these statistical actions to it? 
-</summary>
-The RDD must consist of numeric elements.
-</details>
-
-<details><summary>
-Q: What is the advantage of using Spark vs Numpy to calculate mean or standard deviation?
-</summary>
-The calculation is distributed across different machines and will be
-more scalable.
-</details>
-
-RDD Laziness
-------------
-
-- Q: What is this Spark job doing?
-
-        max = 10000000
-        %time sc.parallelize(xrange(max)).map(lambda x:x+1).count()
-
-- Q: How is the following job different from the previous one? How
-  long do you expect it to take?
-
-        %time sc.parallelize(xrange(max)).map(lambda x:x+1)
-
-Pop Quiz
---------
-
-<details><summary>
-Q: Why did the second job complete so much faster?
-</summary>
-1. Because Spark is lazy. 
-<br>
-2. Transformations produce new RDDs and do no operations on the data.
-<br>
-3. Nothing happens until an action is applied to an RDD.
-<br>
-4. An RDD is the *recipe* for a transformation, rather than the
-   *result* of the transformation.
-</details>
-
-<details><summary>
-Q: What is the benefit of keeping the recipe instead of the result of
-the action?
-</summary>
-1. It save memory.
-<br>
-2. It produces *resilience*. 
-<br>
-3. If an RDD loses data on a machine, it always knows how to recompute it.
-</details>
-
-Writing Data
-------------
-
-Besides reading data Spark and also write data out to a file system.
-
-Q: Calculate the squares of integers from 1 to 100 and write them out
-to `squares.txt`.
-
-- Make sure `squares.txt` does not exist.
-
-        !if [ -e squares.txt ] ; then rm -rf squares.txt ; fi
-
-- Create the RDD and then save it to `squares.txt`.
-
-        rdd1 = sc.parallelize(xrange(10))
-        rdd2 = rdd1.map(lambda x: x*x)
-        rdd2.saveAsTextFile('squares.txt')
-
-- Now look at the output.
-
-        !cat squares.txt
-
-- Looks like the output is a directory.
-
-        !ls -l squares.txt
-
-- Lets take a look at the files.
-
-        !for i in squares.txt/part-*; do echo $i; cat $i; done
-
-Pop Quiz
---------
-
-<details><summary>
-Q: What's going on? Why are there two files in the output directory?
-</summary>
-1. There were two threads that were processing the RDD.
-<br>
-2. The RDD was split up in two partitions (by default).
-<br>
-3. Each partition was processed in a different task.
-</details>
-
-Partitions
-----------
-
-Q: Can we control the number of partitions/tasks that Spark uses for
-processing data? Solve the same problem as above but this time with 5
-tasks.
-
-- Make sure `squares.txt` does not exist.
-
-        !if [ -e squares.txt ] ; then rm -rf squares.txt ; fi
-
-- Create the RDD and then save it to `squares.txt`.
-
-        partitions = 5
-        rdd1 = sc.parallelize(xrange(10), partitions)
-        rdd2 = rdd1.map(lambda x: x*x)
-        rdd2.saveAsTextFile('squares.txt')
-
-- Now look at the output.
-
-        !ls -l squares.txt
-        !for i in squares.txt/part-*; do echo $i; cat $i; done
-
-Pop Quiz
---------
-
-<details><summary>
-Q: How many partitions does Spark use by default?
-</summary>
-1. By default Spark uses 2 partitions.
-<br>
-2. If you read an HDFS file into an RDD Spark uses one partition per
-   block.
-<br>
-3. If you read a file into an RDD from S3 or some other source Spark
-   uses 1 partition per 32 MB of data.
-</details>
-
-<details><summary>
-Q: If I read a file that is 200 MB into an RDD, how many partitions will that have?
-</summary>
-1. If the file is on HDFS that will produce 2 partitions (each is 128
-   MB).
-<br>
-2. If the file is on S3 or some other file system it will produce 7
-   partitions.
-<br>
-3. You can also control the number of partitions by passing in an
-   additional argument into `textFile`.
-</details>
-
-Spark Terminology
------------------
-
-<img src="images/spark-cluster.png">
-
-Term                   |Meaning
-----                   |-------
-Task                   |Single thread in an executor
-Partition              |Data processed by a single task
-Record                 |Records make up a partition that is processed by a single task
-
-Notes
------
-
-- Every Spark application gets executors when you create a new `SparkContext`.
-
-- You can specify how many cores to assign to each executor.
-
-- A core is equivalent to a thread.
-
-- The number of cores determine how many tasks can run concurrently on
-  an executor.
-
-- Each task corresponds to one partition.
-
-Pop Quiz
---------
-
-<details><summary>
-Q: Suppose you have 2 executors, each with 2 cores--so a total of 4
-cores. And you start a Spark job with 8 partitions. How many tasks
-will run concurrently?
-</summary>
-4 tasks will execute concurrently.
-</details>
-
-<details><summary>
-Q: What happens to the other partitions?
-</summary>
-1. The other partitions wait in queue until a task thread becomes
-available.
-<br>
-2. Think of cores as turnstile gates at a train station, and
-   partitions as people .
-<br>
-3. The number of turnstiles determine how many people can get through
-   at once.
-</details>
-
-<details><summary>
-Q: How many Spark jobs can you have in a Spark application?
-</summary>
-As many as you want.
-</details>
-
-<details><summary>
-Q: How many Spark applications and Spark jobs are in this IPython Notebook?
-</summary>
-1. There is one Spark application because there is one `SparkContext`.
-<br>
-2. There are as many Spark jobs as we have invoked actions on RDDs.
-</details>
-
-Stock Quotes
-------------
-
-Q: Find the date on which AAPL's stock price was the highest.
-
-Suppose you have stock market data from Yahoo! for AAPL from
-<http://finance.yahoo.com/q/hp?s=AAPL+Historical+Prices>. The data is
-in CSV format and has these values.
-
-Date        |Open    |High    |Low     |Close   |Volume      |Adj Close
-----        |----    |----    |---     |-----   |------      |---------
-11-18-2014  |113.94  |115.69  |113.89  |115.47  |44,200,300  |115.47
-11-17-2014  |114.27  |117.28  |113.30  |113.99  |46,746,700  |113.99
-
-Here is what the CSV looks like:
-    
-    csv = [
-      "#Date,Open,High,Low,Close,Volume,Adj Close\n",
-      "2014-11-18,113.94,115.69,113.89,115.47,44200300,115.47\n",
-      "2014-11-17,114.27,117.28,113.30,113.99,46746700,113.99\n",
-    ]
-
-Lets find the date on which the price was the highest. 
-
-
-<details><summary>
-Q: What two fields do we need to extract? 
-</summary>
-1. *Date* and *Adj Close*.
-<br>
-2. We want to use *Adj Close* instead of *High* so our calculation is
-   not affected by stock splits.
-</details>
-
-<details><summary>
-Q: What field should we sort on?
-</summary>
-*Adj Close*
-</details>
-
-<details><summary>
-Q: What sequence of operations would we need to perform?
-</summary>
-1. Use `filter` to remove the header line.
-<br>
-2. Use `map` to split each row into fields.
-<br>
-3. Use `map` to extract *Adj Close* and *Date*.
-<br>
-4. Use `sortBy` to sort descending on *Adj Close*.
-<br>
-5. Use `take(1)` to get the highest value.
-</details>
-
-- Here is full source.
-
-        csv = [
-          "#Date,Open,High,Low,Close,Volume,Adj Close\n",
-          "2014-11-18,113.94,115.69,113.89,115.47,44200300,115.47\n",
-          "2014-11-17,114.27,117.28,113.30,113.99,46746700,113.99\n",
-        ]
-        sc.parallelize(csv) \
-          .filter(lambda line: not line.startswith("#")) \
-          .map(lambda line: line.split(",")) \
-          .map(lambda fields: (float(fields[-1]),fields[0])) \
-          .sortBy(lambda (close, date): close, ascending=False) \
-          .take(1)
-
-- Here is the program for finding the high of any stock that stores
-  the data in memory.
-
-        import urllib2
-        import re
-
-        def get_stock_high(symbol):
-          url = 'http://real-chart.finance.yahoo.com' + \
-            '/table.csv?s='+symbol+'&g=d&ignore=.csv'
-          csv = urllib2.urlopen(url).read()
-          csv_lines = csv.split('\n')
-          stock_rdd = sc.parallelize(csv_lines) \
-            .filter(lambda line: re.match(r'\d', line)) \
-            .map(lambda line: line.split(",")) \
-            .map(lambda fields: (float(fields[-1]),fields[0])) \
-            .sortBy(lambda (close, date): close, ascending=False)
-          return stock_rdd.take(1)
-
-        get_stock_high('AAPL')
-
-
-Notes
------
-
-- Spark is high-level like Hive and Pig.
-
-- At the same time it does not invent a new language.
-
-- This allows it to leverage the ecosystem of tools that Python,
-  Scala, and Java provide.
-
 Key Value Pairs
 ===============
 
@@ -1046,6 +718,338 @@ the final result?
 3. Use `fullOuterJoin` to keep both.
 <br>
 </details>
+
+RDD Details
+===========
+
+RDD Statistics
+--------------
+
+Q: How would you calculate the mean, variance, and standard deviation of a sample
+produced by Python's `random()` function?
+
+- Create an RDD and apply the statistical actions to it.
+
+        count = 1000
+        list = [random.random() for _ in xrange(count)]
+        rdd = sc.parallelize(list)
+        print rdd.mean()
+        print rdd.variance()
+        print rdd.stdev()
+
+Pop Quiz
+--------
+
+<details><summary>
+Q: What requirement does an RDD have to satisfy before you can apply
+these statistical actions to it? 
+</summary>
+The RDD must consist of numeric elements.
+</details>
+
+<details><summary>
+Q: What is the advantage of using Spark vs Numpy to calculate mean or standard deviation?
+</summary>
+The calculation is distributed across different machines and will be
+more scalable.
+</details>
+
+RDD Laziness
+------------
+
+- Q: What is this Spark job doing?
+
+        max = 10000000
+        %time sc.parallelize(xrange(max)).map(lambda x:x+1).count()
+
+- Q: How is the following job different from the previous one? How
+  long do you expect it to take?
+
+        %time sc.parallelize(xrange(max)).map(lambda x:x+1)
+
+Pop Quiz
+--------
+
+<details><summary>
+Q: Why did the second job complete so much faster?
+</summary>
+1. Because Spark is lazy. 
+<br>
+2. Transformations produce new RDDs and do no operations on the data.
+<br>
+3. Nothing happens until an action is applied to an RDD.
+<br>
+4. An RDD is the *recipe* for a transformation, rather than the
+   *result* of the transformation.
+</details>
+
+<details><summary>
+Q: What is the benefit of keeping the recipe instead of the result of
+the action?
+</summary>
+1. It save memory.
+<br>
+2. It produces *resilience*. 
+<br>
+3. If an RDD loses data on a machine, it always knows how to recompute it.
+</details>
+
+Writing Data
+------------
+
+Besides reading data Spark and also write data out to a file system.
+
+Q: Calculate the squares of integers from 1 to 100 and write them out
+to `squares.txt`.
+
+- Make sure `squares.txt` does not exist.
+
+        !if [ -e squares.txt ] ; then rm -rf squares.txt ; fi
+
+- Create the RDD and then save it to `squares.txt`.
+
+        rdd1 = sc.parallelize(xrange(10))
+        rdd2 = rdd1.map(lambda x: x*x)
+        rdd2.saveAsTextFile('squares.txt')
+
+- Now look at the output.
+
+        !cat squares.txt
+
+- Looks like the output is a directory.
+
+        !ls -l squares.txt
+
+- Lets take a look at the files.
+
+        !for i in squares.txt/part-*; do echo $i; cat $i; done
+
+Pop Quiz
+--------
+
+<details><summary>
+Q: What's going on? Why are there two files in the output directory?
+</summary>
+1. There were two threads that were processing the RDD.
+<br>
+2. The RDD was split up in two partitions (by default).
+<br>
+3. Each partition was processed in a different task.
+</details>
+
+Partitions
+----------
+
+Q: Can we control the number of partitions/tasks that Spark uses for
+processing data? Solve the same problem as above but this time with 5
+tasks.
+
+- Make sure `squares.txt` does not exist.
+
+        !if [ -e squares.txt ] ; then rm -rf squares.txt ; fi
+
+- Create the RDD and then save it to `squares.txt`.
+
+        partitions = 5
+        rdd1 = sc.parallelize(xrange(10), partitions)
+        rdd2 = rdd1.map(lambda x: x*x)
+        rdd2.saveAsTextFile('squares.txt')
+
+- Now look at the output.
+
+        !ls -l squares.txt
+        !for i in squares.txt/part-*; do echo $i; cat $i; done
+
+Pop Quiz
+--------
+
+<details><summary>
+Q: How many partitions does Spark use by default?
+</summary>
+1. By default Spark uses 2 partitions.
+<br>
+2. If you read an HDFS file into an RDD Spark uses one partition per
+   block.
+<br>
+3. If you read a file into an RDD from S3 or some other source Spark
+   uses 1 partition per 32 MB of data.
+</details>
+
+<details><summary>
+Q: If I read a file that is 200 MB into an RDD, how many partitions will that have?
+</summary>
+1. If the file is on HDFS that will produce 2 partitions (each is 128
+   MB).
+<br>
+2. If the file is on S3 or some other file system it will produce 7
+   partitions.
+<br>
+3. You can also control the number of partitions by passing in an
+   additional argument into `textFile`.
+</details>
+
+Spark Terminology
+-----------------
+
+<img src="images/spark-cluster.png">
+
+Term                   |Meaning
+----                   |-------
+Task                   |Single thread in an executor
+Partition              |Data processed by a single task
+Record                 |Records make up a partition that is processed by a single task
+
+Notes
+-----
+
+- Every Spark application gets executors when you create a new `SparkContext`.
+
+- You can specify how many cores to assign to each executor.
+
+- A core is equivalent to a thread.
+
+- The number of cores determine how many tasks can run concurrently on
+  an executor.
+
+- Each task corresponds to one partition.
+
+Pop Quiz
+--------
+
+<details><summary>
+Q: Suppose you have 2 executors, each with 2 cores--so a total of 4
+cores. And you start a Spark job with 8 partitions. How many tasks
+will run concurrently?
+</summary>
+4 tasks will execute concurrently.
+</details>
+
+<details><summary>
+Q: What happens to the other partitions?
+</summary>
+1. The other partitions wait in queue until a task thread becomes
+available.
+<br>
+2. Think of cores as turnstile gates at a train station, and
+   partitions as people .
+<br>
+3. The number of turnstiles determine how many people can get through
+   at once.
+</details>
+
+<details><summary>
+Q: How many Spark jobs can you have in a Spark application?
+</summary>
+As many as you want.
+</details>
+
+<details><summary>
+Q: How many Spark applications and Spark jobs are in this IPython Notebook?
+</summary>
+1. There is one Spark application because there is one `SparkContext`.
+<br>
+2. There are as many Spark jobs as we have invoked actions on RDDs.
+</details>
+
+Stock Quotes
+------------
+
+Q: Find the date on which AAPL's stock price was the highest.
+
+Suppose you have stock market data from Yahoo! for AAPL from
+<http://finance.yahoo.com/q/hp?s=AAPL+Historical+Prices>. The data is
+in CSV format and has these values.
+
+Date        |Open    |High    |Low     |Close   |Volume      |Adj Close
+----        |----    |----    |---     |-----   |------      |---------
+11-18-2014  |113.94  |115.69  |113.89  |115.47  |44,200,300  |115.47
+11-17-2014  |114.27  |117.28  |113.30  |113.99  |46,746,700  |113.99
+
+Here is what the CSV looks like:
+    
+    csv = [
+      "#Date,Open,High,Low,Close,Volume,Adj Close\n",
+      "2014-11-18,113.94,115.69,113.89,115.47,44200300,115.47\n",
+      "2014-11-17,114.27,117.28,113.30,113.99,46746700,113.99\n",
+    ]
+
+Lets find the date on which the price was the highest. 
+
+
+<details><summary>
+Q: What two fields do we need to extract? 
+</summary>
+1. *Date* and *Adj Close*.
+<br>
+2. We want to use *Adj Close* instead of *High* so our calculation is
+   not affected by stock splits.
+</details>
+
+<details><summary>
+Q: What field should we sort on?
+</summary>
+*Adj Close*
+</details>
+
+<details><summary>
+Q: What sequence of operations would we need to perform?
+</summary>
+1. Use `filter` to remove the header line.
+<br>
+2. Use `map` to split each row into fields.
+<br>
+3. Use `map` to extract *Adj Close* and *Date*.
+<br>
+4. Use `sortBy` to sort descending on *Adj Close*.
+<br>
+5. Use `take(1)` to get the highest value.
+</details>
+
+- Here is full source.
+
+        csv = [
+          "#Date,Open,High,Low,Close,Volume,Adj Close\n",
+          "2014-11-18,113.94,115.69,113.89,115.47,44200300,115.47\n",
+          "2014-11-17,114.27,117.28,113.30,113.99,46746700,113.99\n",
+        ]
+        sc.parallelize(csv) \
+          .filter(lambda line: not line.startswith("#")) \
+          .map(lambda line: line.split(",")) \
+          .map(lambda fields: (float(fields[-1]),fields[0])) \
+          .sortBy(lambda (close, date): close, ascending=False) \
+          .take(1)
+
+- Here is the program for finding the high of any stock that stores
+  the data in memory.
+
+        import urllib2
+        import re
+
+        def get_stock_high(symbol):
+          url = 'http://real-chart.finance.yahoo.com' + \
+            '/table.csv?s='+symbol+'&g=d&ignore=.csv'
+          csv = urllib2.urlopen(url).read()
+          csv_lines = csv.split('\n')
+          stock_rdd = sc.parallelize(csv_lines) \
+            .filter(lambda line: re.match(r'\d', line)) \
+            .map(lambda line: line.split(",")) \
+            .map(lambda fields: (float(fields[-1]),fields[0])) \
+            .sortBy(lambda (close, date): close, ascending=False)
+          return stock_rdd.take(1)
+
+        get_stock_high('AAPL')
+
+
+Notes
+-----
+
+- Spark is high-level like Hive and Pig.
+
+- At the same time it does not invent a new language.
+
+- This allows it to leverage the ecosystem of tools that Python,
+  Scala, and Java provide.
+
 
 
 Caching and Persistence
