@@ -1,3 +1,15 @@
+
+    %%javascript
+    $.getScript('http://asimjalis.github.io/ipyn-ext/js/ipyn-present.js')
+
+<!-- 
+The ipynb was auto-generated from markdown using notedown.
+Instead of modifying the ipynb file modify the markdown source. 
+-->
+
+<h1 class="tocheading">Spark</h1>
+<div id="toc"></div>
+
 <img src="images/spark-logo.png">
 
 Apache Spark
