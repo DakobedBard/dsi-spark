@@ -48,7 +48,7 @@
 	
 * **Some types of RDDs have additional functionality**
 	* Double RDDs -- RDDs consisting of numeric data
-	* Pair RDDs -- RDDs conisting of Key-Value pairs
+	* Pair RDDs -- RDDs consisting of Key-Value pairs
 
 * **Pair RDDs are a special form of RDD**
 	* Each element must be a key-value pair (a two element tuple)
@@ -75,11 +75,11 @@
 		* Jobs typically contain many map and reduce phases
 		* Job output is saved to files after each phase completes
 		* This has the effect of writing your intermediate data to disk and reading it back into memory between each phase
-		* Many complex quieries (such as joins) can have many chained MapReduce phases, causing a large amount of disk I/O as intermediate phases are spilled to disk
+		* Many complex queries (such as joins) can have many chained MapReduce phases, causing a large amount of disk I/O as intermediate phases are spilled to disk
 		* Since disk I/O is orders of magnitude slower than RAM, jobs typically take a long time to complete
 
 * **Spark implements MapReduce with much greater flexibility**
-	* Map and Reduce fundtions can be interspersed
+	* Map and Reduce functions can be interspersed
 	* Results are stored in memory and 'pipelined` between phases without incurring the cost of disk I/O
 		* Operations can be chained easily
 		
@@ -98,7 +98,7 @@ counts = sc.textFile(file) \
 
 ```python
 # Every Spark application requires a Spark Context
-# Spark shell provides a proconfigured Spark Context called `sc`
+# Spark shell provides a preconfigured Spark Context called `sc`
 nums = sc.parallelize([1,2,3])
 # Pass each element through a function
 squared = nums.map(lambda x: x*x) // => {1, 4, 9}
