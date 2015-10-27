@@ -35,7 +35,7 @@ Why learn Spark?
 
 - Spark skills are in high demand--<http://indeed.com/salary>.
 
-- Spark is signficantly faster than MapReduce.
+- Spark is significantly faster than MapReduce.
 
 - Paradoxically, Spark's API is simpler than the MapReduce API.
 
@@ -66,7 +66,7 @@ Matei Zaharia
 
 <img style="width:50%" src="images/matei.jpg">
 
-Essense of Spark
+Essence of Spark
 ----------------
 
 What is the basic idea of Spark?
@@ -1203,7 +1203,7 @@ Amazon S3
 - *"s3:" URLs break when Secret Key contains a slash, even if encoded*
     <https://issues.apache.org/jira/browse/HADOOP-3733>
 
-- *Spark 1.3.1 / Hadoop 2.6 prebuilt pacakge has broken S3 filesystem access*
+- *Spark 1.3.1 / Hadoop 2.6 prebuilt package has broken S3 filesystem access*
     <https://issues.apache.org/jira/browse/SPARK-7442>
 
 <!--
