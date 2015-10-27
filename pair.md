@@ -35,7 +35,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
    
    - Make another RDD with `(label, text)`. We will make bag-of-words 
      and compute term frequency out of the `text`. This will be the 
-     target and feature we will later train our Navie Bayes on.
+     target and feature we will later train our Naive Bayes on.
 
 5. Tokenize your text by mapping the following functions: 
    
@@ -88,7 +88,7 @@ We are going to build a Naive Bayes model to predict the category of the newsgro
    here. The  `NaiveBayes` model is a Python class, and once it is trained, it can just be used as a Python class.
    
 11. Map the `predict()` function of the `NaiveBayes` model onto the test set features to get
-   predictions. Caculate the accuracy of the predictions. Your accuracy should be above 80%.
+   predictions. Calculate the accuracy of the predictions. Your accuracy should be above 80%.
    
    If this is taking too long. Reference the timeline of my runtime shown below.
    
