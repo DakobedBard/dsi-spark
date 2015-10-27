@@ -288,10 +288,10 @@ airports with the worst / least delay.
 
 10. Use `rdd.sortBy()` to sort the RDDs by the mean delay time to answer the following questions.
 
-    - Top 10 departing airport that has least avgerage delay in minutes
-    - Top 10 departing airport that has most avgerage delay in minutes
-    - Top 10 arriving airport that has least avgerage delay in minutes
-    - Top 10 arriving airport that has most avgerage delay in minutes
+    - Top 10 departing airport that has least average delay in minutes
+    - Top 10 departing airport that has most average delay in minutes
+    - Top 10 arriving airport that has least average delay in minutes
+    - Top 10 arriving airport that has most average delay in minutes
 
    
 
