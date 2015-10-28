@@ -233,7 +233,7 @@ airports with the worst / least delay.
 1. Read [**sparkui.md**](sparkui.md) for further guide as to how to use the UI. The guide will bring you through
    `2.` and `3.`.
 
-2. Load the file in as follow.
+2. Load the file in as follow. (Note: Loading won't work if your AWS keys contain a slash.  Generate a new pair if necessary.)
 
    ```python
    # DON'T INCLUDE THE '[' AND ']'
