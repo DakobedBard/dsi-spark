@@ -12,7 +12,7 @@
 
 ### Distributed Processing with the Spark Framework
 
-![spark](images/spark.png)
+![spark](../images/spark.png)
 
 ## RDDs
 

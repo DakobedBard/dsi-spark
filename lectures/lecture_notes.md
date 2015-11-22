@@ -10,7 +10,7 @@ Instead of modifying the ipynb file modify the markdown source.
 <h1 class="tocheading">Spark</h1>
 <div id="toc"></div>
 
-<img src="images/spark-logo.png">
+<img src="../images/spark-logo.png">
 
 Apache Spark
 ============
@@ -64,7 +64,7 @@ April 17, 2015     |Spark 1.3.1    |Bug fixes, minor changes
 Matei Zaharia
 -------------
 
-<img style="width:50%" src="images/matei.jpg">
+<img style="width:50%" src="../images/matei.jpg">
 
 Essence of Spark
 ----------------
@@ -120,7 +120,7 @@ Spark Fundamentals
 Spark Execution
 ---------------
 
-<img src="images/spark-cluster.png">
+<img src="../images/spark-cluster.png">
 
 
 Spark Terminology
@@ -238,7 +238,7 @@ Q: Find all the primes less than 100.
 Pop Quiz
 --------
 
-<img src="images/spark-cluster.png">
+<img src="../images/spark-cluster.png">
 
 <details><summary>
 Q: Where does `is_prime` execute?
@@ -891,7 +891,7 @@ Q: If I read a file that is 200 MB into an RDD, how many partitions will that ha
 Spark Terminology
 -----------------
 
-<img src="images/spark-cluster.png">
+<img src="../images/spark-cluster.png">
 
 Term                   |Meaning
 ----                   |-------
