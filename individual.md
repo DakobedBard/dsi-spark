@@ -249,7 +249,7 @@ we want to identify airports with the worst / least delay.
 
 <br>
 
-1. Read [**lectures/sparkui.md**](sparkui.md) for further guide as to how to use 
+1. Read [**lectures/sparkui.md**](lectures/sparkui.md) for further guide as to how to use 
    the UI. The guide will bring you through `2.` and `3.`. 
    
    *Note*: If you have issues with proxy settings and you're using Firefox, try 
