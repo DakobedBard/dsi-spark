@@ -39,9 +39,9 @@ the category of a newsgroup article based on its content.
      of the numeric label to the name of the label. We will need it later.
 
    - Make another RDD with `(label, text)`. We will make a bag-of-words
-     and compute term frequency out of the `text`. The label will be the
-     target we will later train our Naive Bayes on (with bag-of-words being
-     the feature).
+     and compute term-frequency out of the `text`. The label will be the
+     target we will later train our Naive Bayes on, and the term-frequency
+     will be the feature.
 
 5. Tokenize your text by mapping the following functions:
 
@@ -58,10 +58,10 @@ the category of a newsgroup article based on its content.
    each piece.
 
 6. You should now have a `(key, value)` pair RDD where the `key` is the numeric
-   value that represents the category of newsgroup of the article and the `value`
+   value that represents the category (i.e. label) of newsgroup of the article and the `value`
    is a list of the stemmed words of the article.
 
-   Create a new RDD where the key remains to be the category and value is the
+   Create a new RDD where the key remains the category and the value is the
    term-frequency (TF) vector for each article. This is going to require some
    thinking, and comes with some caveats. You may not use the built-in
    `HashingTF()` (we'll use this in a second), nor use `collect()` on the
@@ -77,9 +77,9 @@ the category of a newsgroup article based on its content.
    - `.flatMap()`
    - `.distinct()`
    - `.mapValues()`
-   - `Counter()` (Python function)
+   - `Counter()` (Python class)
 
-7. Now let's use `HashingTF()` to get the word vector in order to confirm your
+7. Now let's use `HashingTF()` to get the word vector in order to confirm
    that your implementation is correct. Your first row should have a sum of 186
    words. You cannot compare the actual word vec since `HashingTF()` would have
    mixed up the ordering of the vocab.
@@ -104,9 +104,9 @@ the category of a newsgroup article based on its content.
 
 10. Train the `NaiveBayes` model on the train data set. See the [docs](http://spark.apache.org/docs/1.2.0/api/python/pyspark.mllib.html#module-pyspark.mllib.classification)
     here. The  `NaiveBayes` model is a Python class, and once it is trained, it
-    can be just like a Python class.
+    can be used like a Python class.
 
-11. Map the `predict()` function of the `NaiveBayes` model onto the test set
+11. Map the `predict()` method of the `NaiveBayes` model onto the test set
     features to get predictions. Calculate the accuracy of the predictions.
     Your accuracy should be above 80%.
 
@@ -115,7 +115,7 @@ the category of a newsgroup article based on its content.
     ![image](images/log.png)
 
 12. Examine the predictions that are incorrect. Use the dictionary you have created
-    in `3.` to get the `label_name` of those predictions. Examine the content of
+    in `4.` to get the `label_name` of those predictions. Examine the content of
     the incorrect predictions and try to reason why the content is incorrectly
     predicted.
 
@@ -161,7 +161,7 @@ vectors are learned via backpropagation and stochastic gradient descent
    However, once the model is trained, it does not have to be re-trained.
    It can be used as a normal Python class.
 
-4. One of common the uses of Word2Vec is to find words similar in context to a word
+4. One of common uses of Word2Vec is to find words similar in context to a word
    in question. Call the `findSynonyms()` function of the model and provide the
    word in question as the first argument and the number of most similar words
    to extract as the second argument.

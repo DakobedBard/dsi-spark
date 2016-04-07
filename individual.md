@@ -64,7 +64,7 @@ cluster to run our jobs.
    to call `collect()` on very large datasets). The standard workflow when working
    with RDDs is to perform all the big data operations/transformations
    **before** you pool/retrieve the results. If the results can't be `collect()ed`
-   onto a single machine, it's common to write data out to a distributed storage
+   onto your driver program, it's common to write data out to a distributed storage
    system, like HDFS or S3.
 
    With all that said, we can retrieve all the items from our RDD as follows:
@@ -94,6 +94,8 @@ or `filter()`) this transformation returns another RDD.
    running properly.
    * If you are not sure what RDD transformations/actions there are, you can
    check out the [docs][RDD-docs].
+
+**Steps**:
 
 1. Turn the items in `file_rdd` into `(key, value)` pairs using `map()` and a
 `lambda` function. Map each item into a json object (use `json.loads()`) and
@@ -137,10 +139,10 @@ that are going to do work on the cluster.
 Here is a **quick** guide to tmux for you to skim through:
 
 ```bash
-brew install tmux # Install tmux.
-tmux new -s [session_name] # Start a new tmux session.
-ctrl + b, d # Detach from that tmux session.
-tmux ls # Get a list of your currently running tmux sessions.
+brew install tmux             # Install tmux.
+tmux new -s [session_name]    # Start a new tmux session.
+ctrl + b, d                   # Detach from that tmux session.
+tmux ls                       # Get a list of your currently running tmux sessions.
 tmux attach -t [session_name] # Attach to an existing session.
 ```
 
@@ -284,7 +286,7 @@ a slash. Generate a new pair if necessary.)
    2012,4,AA,12478,12892,-4.00,0.00,-21.00,0.00,0.00
    ```
 
-6. Use `filter` to filter out the line containing the column names.
+6. Use `filter()` to filter out the line containing the column names. Split that line on ',' to get a *list* of column names (you'll need these column names in the next step).
 
 7. Write a function, `make_rows()`, that takes a line as an argument and returns
    a dictionary where the keys are the column names and the values are the
@@ -298,10 +300,12 @@ a slash. Generate a new pair if necessary.)
    - There are missing values in `DEP_DELAY` and `ARR_DELAY` (i.e. `''`) and
      you would want to replace those with `0`.
 
-   Map `make_rows()` to the RDD and you should have an RDD where each item is
+   Create a new RDD where the first row (i.e. the header row) is removed.
+
+   Use `make_rows()` to create a new RDD where each row is
    a dictionary.
 
-8. Instead of dictionaries, make 2 RDDs where the items are tuples.
+8. Instead of dictionaries, make 2 new RDDs where the items are tuples.
    The first RDD will contain tuples `(DEST_AIRPORT_ID, ARR_DELAY)`.
    The other RDD will contain `(ORIGIN_AIRPORT_ID, DEP_DELAY)`.
    Run a `.first()` or `.take()` to confirm your results.
