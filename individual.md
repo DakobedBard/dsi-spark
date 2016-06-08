@@ -247,7 +247,7 @@ we want to identify airports with the worst / least delay.
 - Arrival delays (`ARR_DELAY`) and departure delays (`DEP_DELAY`)
 - All delays are in terms of **minutes**
 - `ARR_DELAY` is associated with the destination airport (`DEST_AIRPORT_ID`)
-- `DEP_DELAY` is associated with the destination airport (`ORIGIN_AIRPORT_ID`)
+- `DEP_DELAY` is associated with the origin airport (`ORIGIN_AIRPORT_ID`)
 
 <br>
 
