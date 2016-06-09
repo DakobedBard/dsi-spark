@@ -259,8 +259,14 @@ we want to identify airports with the worst / least delay.
 a slash. Generate a new pair if necessary.)
 
    ```python
+   import os
+   #This requires you to define environment variables in your 
+   #.bash_profile with the below names:
+   access_key = os.getenv('AWS_ACCESS_KEY_ID')
+   secret = os.getenv('AWS_SECRET_ACCESS_KEY')
+
    # DON'T INCLUDE THE '[' AND ']' when you replace your keys. 
-   link = 's3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@mortar-example-data/airline-data'
+   link = 's3n://%s:%s@mortar-example-data/airline-data' % (access_key, secret)
    airline = sc.textFile(link)
    ```
    

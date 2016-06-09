@@ -23,7 +23,12 @@ the category of a newsgroup article based on its content.
    `json.loads()`. `take()` the first 2 lines to confirm your results.
 
    ```python
-   data_raw = sc.textFile('s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@sparkdatasets/news.txt')
+   import os
+   #This requires you to define environment variables in your 
+   #.bash_profile with the below names:
+   access_key = os.getenv('AWS_ACCESS_KEY_ID')
+   secret = os.getenv('AWS_SECRET_ACCESS_KEY')
+   data_raw = sc.textFile('s3n://%s:%s@sparkdatasets/news.txt' % (access_key, secret))
    ```
    
 3. Check how many partitions are in your RDD by using `.getNumPartitions()`. If 
