@@ -1,9 +1,9 @@
-##Part 1: RDD and Spark Basics
+## Part 1: RDD and Spark Basics
 
-Here we will get familiar with the basics of Spark via the Spark Python API
-(`PySpark`). For now, we will be just working with a master/driver node that
-will parallelize its work across all our cores (rather than handing off the
-work to its workers). In `Part 3`, we are going to simulate a master-worker
+Here we will get familiar with the basics of Spark via the Spark Python API, 
+`PySpark`. For now, we will be just working with a single node that will 
+parallelize processes across all of our cores (rather than distributing them 
+across worker nodes). In `Part 3`, we are going to simulate a master-worker
 cluster to run our jobs.
 
 1. Initiate a `SparkContext`. A `SparkContext` specifies where your cluster is,
@@ -25,25 +25,30 @@ cluster to run our jobs.
    multiprocessing.cpu_count()
    ```
 
+   You should see a large log output, if there are no `ERROR` messages then you're
+   to go. The `INFO` logs that you see will continue to appear everytime you have
+   your spark context perform an action. If you want to suppress them and only have
+   potential `ERROR`s get displayed you can run `sc.setLogLevel('ERROR')`.
+
 2. Spark operates in **[Resilient Distributed Datasets (RDDs)][RDDs]. An RDD is
-   a collection of data partitioned across machines**. Using RDDs allows the
-   processing of your data to be parallelized due to the partitions. RDDs can
-   be created from your SparkContext in two ways: loading an external dataset,
-   or by parallelizing an existing collection of objects in your currently
-   running program (in our Python programs, this is often times a list).
+   a collection of data partitioned across machines**. RDDs allow the processing 
+   of data to be parallelized due to the partitions. RDDs can be created from 
+   a SparkContext in two ways: loading an external dataset, or by parallelizing 
+   an existing collection of objects in your currently running program (in our 
+   Python programs, this is often times a list).
 
-   Create an RDD from a python list.
+   * Create an RDD from a Python list.
 
-   ```python
-   lst_rdd = sc.parallelize([1, 2, 3])
-   ```
+       ```python
+       lst_rdd = sc.parallelize([1, 2, 3])
+       ```
 
-   Read an RDD in from a text file. **By default, the RDD will treat each line
+   * Read an RDD in from a text file. **By default, the RDD will treat each line
    as an item and read it in as string.**
 
-   ```python
-   file_rdd = sc.textFile('data/cookie_data.txt').cache()
-   ```
+       ```python
+       file_rdd = sc.textFile('data/cookie_data.txt')
+       ```
 
 3. Now that we have an RDD, we need to see what is inside. RDDs by default will
    load data into partitions across the machines on your cluster. This means that
@@ -51,8 +56,8 @@ cluster to run our jobs.
    without accessing all of the partitions and loading all of the data into memory.
 
    ```python
-   file_rdd.first() # Views the first entry
-   file_rdd.take(2) # Views the first two entries
+   file_rdd.first() # Returns the first entry in the RDD
+   file_rdd.take(2) # Returns the first two entries in the RDD as a list
    ```
 
 4. To retrieve all the items in your RDD, every partition in the RDD has to be
@@ -61,32 +66,38 @@ cluster to run our jobs.
    should be aware of how many entries you are pulling. Keep in mind that to
    execute the `collect()` method on the RDD object (like we do below), your entire
    dataset must fit in memory in your driver program (we in general don't want
-   to call `collect()` on very large datasets). The standard workflow when working
-   with RDDs is to perform all the big data operations/transformations
-   **before** you pool/retrieve the results. If the results can't be `collect()ed`
-   onto your driver program, it's common to write data out to a distributed storage
-   system, like HDFS or S3.
+   to call `collect()` on very large datasets). 
+   
+   The standard workflow when working with RDDs is to perform all the big data 
+   operations/transformations **before** you pool/retrieve the results. If the 
+   results can't be collected onto your driver program, it's common to write 
+   data out to a distributed storage system, like HDFS or S3.
 
-   With all that said, we can retrieve all the items from our RDD as follows:
+   With that said, we can retrieve all the items from our RDD as follows:
 
    ```python
    file_rdd.collect()
    lst_rdd.collect()
    ```
 
-##Part 2: Intro to Functional Programming
+## Part 2: Intro to Functional Programming
 
-Spark operations conform to a [functional programming paradigm][funct-programming].
-In terms of our RDD objects, what this means is that our RDD objects are immutable
-and that anytime we apply a **transformation** to an RDD (such as `map()`, `reduceByKey()`,
-or `filter()`) this transformation returns another RDD.
+Spark operations fit within the [functional programming paradigm][funct-programming].
+In terms of our RDD objects, this means that our RDD objects are immutable and that 
+anytime we apply a **transformation** to an RDD (such as `map()`, `reduceByKey()`,
+or `filter()`) it returns another RDD.
+
+Transformations in Spark are lazy, this means that performing a transformation does 
+not cause computations to be performed. Instead, an RDD remembers the chain of 
+transformations that you define and computes them all only when and action requires 
+a result to be returned.
 
 **Spark notes**:
 
    * A lot of Spark's functionalities assume the items in an RDD to be tuples
    of `(key, value)` pairs, so often times it can be useful to structure your
    RDDs this way.
-   * Beware of [**lazy evaluation**][wiki-lazy-eval], where tranformations
+   * Beware of [lazy evaluation][wiki-lazy-eval], where transformations
    on the RDD are not executed until an **action** is executed on the RDD
    to retrieve items from it (such as `collect()`, `first()`, `take()`, or
    `count()`). So if you are doing a lot transformations in a row, it can
@@ -97,30 +108,35 @@ or `filter()`) this transformation returns another RDD.
 
 **Steps**:
 
-1. Turn the items in `file_rdd` into `(key, value)` pairs using `map()` and a
-`lambda` function. Map each item into a json object (use `json.loads()`) and
-then map the json object to a `(key, value)` pair. **Remember to cast
-value as type** `int`.  Use `collect()` to see your results. Using `collect()`
-is fine here since the data is small. Make sure that:
+1. Turn the items in `file_rdd` into `(key, value)` pairs using `.map()`. Map 
+each item into a json object (use `json.loads()`) and then map the json object 
+to a `(key, value)` pair. You can do this with two maps each with its own lambda,
+or with a single map and a function. **Remember to cast value as type** `int`.  Use
+`collect()` to see your results. Using `collect()` is fine here since the data is
+small. Make sure that:
 
-   - **The key is the name of the person**
-   - **The value is how many chocolate chip cookies they bought**
+   * **The key is the name of the person**.
+   * **The value is how many chocolate chip cookies they bought**.
+
 
 2. Now use `filter()` to look for entries with more than `5` chocolate chip cookies.
 
 3. For each name, return the entry with the max number of cookies.
 
-   **Hint:**
-   - Use `reduceByKey()` instead of `groupByKey()`. See why [here][groupby-v-reduceby-key].
+   **Hint**: 
+    * Use `reduceByKey()` instead of `groupByKey()`. See why [here][groupby-v-reduceby-key].
+    * You may get a warning sayin gthat you should install `psutil`. You can with 
+    `pip install psutil`.
+
 
 4. Calculate the total revenue from people buying cookies (we're assuming that
 each cookie only costs $1).
 
-   **Hint:**
-   - `rdd.values()` returns another RDD of all the values
-   - Use `reduce()` to return the sum of all the values
+   **Hint**:
+   * `rdd.values()` returns another RDD of all the values.
+   * Use `reduce()` to return the sum of all the values.
 
-##Part 3: Starting a Local Cluster
+## Part 3: Starting a Local Cluster
 
 Here we will simulate starting a master/worker cluster locally. This is different
 from parts 1 and 2 in that there will now be workers with which the master will
@@ -173,7 +189,9 @@ parameters:
    --webui-port 8080
    ```
 3. You should get some output in your terminal similar to the following:
-   ![master_term](https://github.com/zipfian/spark/blob/master/images/master_term.png)
+    <br>
+    <div style="text-align: center"><img src="images/master_term.png" alt="master_term" style="width: 700px"></div>
+    <br>
 
 4. Detach from your master session(`crtl+b, d`). Start a new tmux session which
    will host your first worker node:
@@ -194,7 +212,8 @@ parameters:
    This will start a worker with 1GB memory and 1 core and attach it to the
    previously created Spark master. The output in your terminal should be:
 
-   ![worker_term](https://github.com/zipfian/spark/blob/master/images/worker_term.png)
+    <div style="text-align: center"><img src="images/worker_term.png" alt="worker_term" style="width: 700px"></div>
+    <br>
 
    Detach the current session and create a new session and run the same command
    to create a second worker.
@@ -205,7 +224,8 @@ parameters:
 
    <h3 style="color:red">Your web UI is at: <code>localhost:8080</code></h3>
 
-   ![sparkui_first](https://github.com/zipfian/spark/blob/master/images/sparkui_first.png)
+    <div style="text-align: center"><img src="images/sparkui_first.png" alt="sparkui_first" style="width: 700px"></div>
+    <br>
 
 7. We are not running any applications with our local Spark cluster yet.
    We can attach an IPython notebook to the master and start `pyspark` by
@@ -235,7 +255,8 @@ variable `sc`.
 
 9. Now if you refresh your spark web UI, you should see **`PySparkShell`** running in the list of applications.
 
-  ![running_application](https://github.com/zipfian/spark/blob/master/images/running_application.png)
+    <div style="text-align: center"><img src="images/running_application.png" alt="running_application" style="width: 700px"></div>
+    <br>
 
 ##Part 4: Spark for Data Processing
 
