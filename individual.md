@@ -179,9 +179,9 @@ background terminal sessions.
 The Master class in `org.apache.spark.deploy.master` accepts the following
 parameters:
 
-   * `h`: host (local host, `127.0.0.1`, in our case)
-   * `p`: The port on which the master is listening in (`7077`)
-   * `webui-port`: The port on which the web user interface is reachable (`8080`)
+   * `h`: host, local host, `127.0.0.1`, in our case.
+   * `p`: The port on which the master is listening on, `7077`.
+   * `webui-port`: The port on which the web user interface (UI) is reachable,`8080`.
 
    <br>
 
@@ -275,78 +275,135 @@ in the list of applications.
    <div style="text-align: center"><img src="images/running_application.png" alt="running_application" style="width: 700px"></div>
    <br>
 
-##Part 4: Spark for Data Processing
+## Part 4: Spark for Data Processing
 
-Using the cluster we have set up in `Part 3`, we will be dealing with airport data and
-we want to identify airports with the worst / least delay.
+Using the cluster we set up in `Part 3` we will explore airline data. The data are stored
+on S3 so you will need your AWS access key and secret access key.
 
-**2 types of delays:**
+### Side Note About Personal Credentials
 
-- Arrival delays (`ARR_DELAY`) and departure delays (`DEP_DELAY`)
-- All delays are in terms of **minutes**
-- `ARR_DELAY` is associated with the destination airport (`DEST_AIRPORT_ID`)
-- `DEP_DELAY` is associated with the origin airport (`ORIGIN_AIRPORT_ID`)
+It's good practice to keep personal credentials stored in environment variables set in 
+your bash profile so that you don't have to hard code their values into your solutions.
+This is particularly important when the code that uses your keys is stored on GitHub 
+since you don't want to be sharing your access keys with the world. To do this make
+add the lines below to your bash profile.
 
-<br>
+Before you do so, check your AWS keys to make sure they don't have a slash in them. If
+you see a slash in one you can get a new one on AWS. All you have to do is go to "Security Credentials" under your account in the AWS dashboard, then look under the "Access Keys"
+option. Click `Create New Access Key` and make sure that it doesn't have a slash in it either.
+Do this until you get slash-free keys. Use those as your environment variables as shown below.
 
-1. Read [**sparkui.md**](https://github.com/zipfian/DSI_Lectures/blob/master/spark/jeff_tang/sparkui.md) for further guide as to how to use
-   the UI. The guide will bring you through `2.` and `3.`.
+```bash
+export AWS_ACCESS_KEY_ID=YOUR ACCESS KEY
+export AWS_SECRET_ACCESS_KEY=YOUR SECRET ACCESS KEY
+```
 
-   *Note*: If you have issues with proxy settings and you're using Firefox, try
-   using Chrome.
+Keep in mind that if you ever have to change your keys you'll need to make sure that you
+update your bash profile.
 
-2. Load the file in as follows. (Note: Loading won't work if your AWS keys contain
-a slash. Generate a new pair if necessary.)
+Now you're ready to load up and explore the data all while becoming more familiar with
+Spark.
+
+### Loading Data and Interacting With the Spark UI
+
+1. Go to the web UI for your cluster in your browser, located at `localhost:8080`. 
+**Note**: If you have issues with proxy settings and you're using Firefox, try using 
+Chrome.
+
+   Click on `PySparkShell` in the "Name" column under "Running Applications". You should
+see an empty page like the following.
+
+   <div style="text-align: center"><img src="images/empty_spark_queue.png" alt="empty_spark_queue" style="width: 700px"></div>
+
+2. Load the data from S3 as follows. **Note**: As discussed above, loading won't work if 
+either of your AWS keys contain a slash. Generate a new pair if necessary by following
+the steps outlined above.
 
    ```python
    import os
-   #This requires you to define environment variables in your 
-   #.bash_profile with the below names:
    access_key = os.getenv('AWS_ACCESS_KEY_ID')
-   secret = os.getenv('AWS_SECRET_ACCESS_KEY')
+   secret_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 
-   link = 's3n://%s:%s@mortar-example-data/airline-data' % (access_key, secret)
-   airline = sc.textFile(link)
+   link = 's3n://{}:{}@mortar-example-data/airline-data'.format(access_key, secret_key)
+   airline_rdd = sc.textFile(link)
    ```
 
-3. Print the first 2 entries. The first entry is the column names and starting
-   with the second we have our data. Also run a `.count()` on the RDD. This will
-   **take a while**, as the data set is a few million rows and it all must be downloaded from S3.
+3. Print the first 2 entries with `take(2)` on `airline_rdd`. The first entry is the
+column names and starting with the second we have our data. If you reload the previously
+empty jobs page you'll see information about the action, `take(2)` that you just had Spark
+perform.
 
-4. As you can see, `.count()` takes a long time to run. More involved commands can
-   take even longer. In order not to waste time when writing/testing your code,
-   it's common practice to work with a sub-sample of your data until you have
-   your code finalized/polished and ready to run on the full dataset. Use
-   `.take(100)` to sample out the first 100 rows and assign it to a new RDD
-    using `sc.parallelize`.
+   <div style="text-align: center"><img src="images/first_spark_job.png" alt="first_spark_job" style="width: 700px"></div>
 
-5. Let's do some preprocessing. Remove the `'`, `"` and the trailing `,` for
-   each line. Print the first 2 lines to confirm. The first 2 lines should
-   look like the following.
+4. Now run `count()` on the RDD. This will **take a while**, as the data set is a few 
+million rows and it all must be downloaded from S3. If you look at the jobs page, reloading
+every so often, while it's happening you'll see that it's tells you about how much of the
+job has been completed along with information about the prior jobs.
+
+   <div style="text-align: center"><img src="images/second_spark_job.png" alt="second_spark_job" style="width: 700px"></div>
+
+   Once the job has been complete the jobs page will look like this:
+
+   <div style="text-align: center"><img src="images/finished_second_job.png" alt="finished_second_job" style="width: 700px"></div>
+
+5. You can inspect the details of a specific job by clicking on it's link in the
+"Description" column of the jobs page. You'll see the same information as on the
+jobs page, a quick summary of the tasks; but, if you click on the link in the
+"Description" column for the stage (there was only one stage for this job), you will
+see page detailing everything about that stage.
+
+   <div style="text-align: center"><img src="images/stage_details.png" alt="stage_details" style="width: 700px"></div>
+
+### Data Time
+
+Now that you've got a feel for looking at the Spark web UI, it may be useful to look at it
+throughout the rest of the sprint, we can move on to looking at and transforming the data.
+We want to identify airports with the worst / least delays. Consider the following about delays:
+
+* **2 types of delays:**
+    * Arrival delays, `ARR_DELAY`, and departure delays, `DEP_DELAY`.
+* All delays are in terms of **minutes**.
+* Arrival delays are associated with the destination airport, `DEST_AIRPORT_ID`.
+* Departure delays are associated with the origin airport, `ORIGIN_AIRPORT_ID`.
+
+<br>
+
+1. As you just saw the `count()` action takes a long time to run. More involved
+commands can take even longer. In order to not waste time when writing/testing
+your code, it's common practice to work with a sub-sample of your data until
+you have your code finalized/polished and ready to run on the full dataset. Use
+`take(100)` to sample out the first 100 rows and assign it to a new RDD using
+`sc.parallelize()`.
+
+2. Let's do some preprocessing. Write a function to map over an RDD to remove the
+all single quotes, `'`,  double quotes, `"`, and the trailing `,` for each line.
+Print the first 2 lines, with `take(2)`, to confirm you've cleaned the rows correctly.
+The first 2 lines should look like the following.
 
    ```
    YEAR,MONTH,UNIQUE_CARRIER,ORIGIN_AIRPORT_ID,DEST_AIRPORT_ID,DEP_DELAY,DEP_DELAY_NEW,ARR_DELAY,ARR_DELAY_NEW,CANCELLED
    2012,4,AA,12478,12892,-4.00,0.00,-21.00,0.00,0.00
    ```
 
-6. Use `filter()` to filter out the line containing the column names. Split that line on ',' to get a *list* of column names (you'll need these column names in the next step).
+3. Use `filter()` with a `lambda` function to filter out the line containing the
+column names. Split that line on ',' to get a **list** of column names (you'll
+need these column names in the next step).
 
-7. Write a function, `make_rows()`, that takes a line as an argument and returns
-   a dictionary where the keys are the column names and the values are the
-   values for the column.
+4. Write a function, `make_row_dict()`, that takes a row as an argument and
+returns a dictionary where the keys are column names and the values are the values
+for the column. Follow the specifications below to make your dictionary.
 
-   - The output is a dictionary with only these columns:
-     `['DEST_AIRPORT_ID', 'ORIGIN_AIRPORT_ID', 'DEP_DELAY', 'ARR_DELAY']`
-   - Cast `DEP_DELAY` and `ARR_DELAY` as a float. These are minutes that are delayed.
-   - Subtract `DEP_DELAY` from `ARR_DELAY` to get the actual `ARR_DELAY`
-   - If a flight is `CANCELLED`, add 5 hours to `DEP_DELAY`
-   - There are missing values in `DEP_DELAY` and `ARR_DELAY` (i.e. `''`) and
-     you would want to replace those with `0`.
+   * The dictionary will only keep track of the following columns:
 
-   Create a new RDD where the first row (i.e. the header row) is removed.
+    `['DEST_AIRPORT_ID', 'ORIGIN_AIRPORT_ID', 'DEP_DELAY', 'ARR_DELAY']`
+   * Cast the values for `DEP_DELAY` and `ARR_DELAY` as floats and take their absolute
+   value. The magnitude of these values correspond with delay lengths in minutes.
+   * Subtract `DEP_DELAY` from `ARR_DELAY` to get the actual `ARR_DELAY`.
+   * If a flight is `CANCELLED`, add 5 hours, 300 minutes, to `DEP_DELAY`.
+   * There are missing values in `DEP_DELAY` and `ARR_DELAY` (i.e. `''`) and
+     you would want to replace those with `0.0`.
 
-   Use `make_rows()` to create a new RDD where each row is
-   a dictionary.
+   Map `make_row_dict()` over your RDD to make a new dictionary RDD.
 
 8. Instead of dictionaries, make 2 new RDDs where the items are tuples.
    The first RDD will contain tuples `(DEST_AIRPORT_ID, ARR_DELAY)`.
