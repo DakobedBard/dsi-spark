@@ -125,7 +125,7 @@ small. Make sure that:
 
    **Hint**: 
     * Use `reduceByKey()` instead of `groupByKey()`. See why [here][groupby-v-reduceby-key].
-    * You may get a warning sayin gthat you should install `psutil`. You can with 
+    * You may get a warning saying that you should install `psutil`. You can with 
     `pip install psutil`.
 
 
@@ -139,33 +139,36 @@ each cookie only costs $1).
 ## Part 3: Starting a Local Cluster
 
 Here we will simulate starting a master/worker cluster locally. This is different
-from parts 1 and 2 in that there will now be workers with which the master will
-communicate. Simulating a master/worker cluster is useful in that it allows us
-to develop code on a local cluster before deployment. This way, we can work out
-any of the kinks/problems that might be in our programs before using valuable
-cluster resources.
+from parts 1 and 2 in that there will now be "workers", on separate cores of your
+computer, that the "master", also living on it's own core, will communicate with. 
 
-We will be using [`tmux`](http://tmux.github.io/) to run our scripts in
-the background. `tmux` lets us *multiplex* our terminal, create terminal sessions,
-and attach/detach different programs in the terminal (somewhat like running
-processes in hidden terminals). This will be useful for us because we will be
-able to push our cluster into the background and focus on our python programs
-that are going to do work on the cluster.
+Simulating a master/worker cluster is useful since it allows us to develop code 
+and test how it performs on a small cluster before deployment to multiple machines.
+This way, we can work out any of the kinks/problems that might be in our programs,
+that manifest on actual clusters, before using valuable computation resources.
+
+We will be using [tmux](http://tmux.github.io/) to run our scripts in
+the background. tmux lets us *multiplex* our terminal, create terminal sessions,
+and attach/detach from those sessions in the terminal (somewhat like running
+processes in hidden terminals). This will be useful because it allows us to put our 
+cluster processes on terminal sessions that are running in the background.
 
 Here is a **quick** guide to tmux for you to skim through:
 
 ```bash
-brew install tmux             # Install tmux.
-tmux new -s [session_name]    # Start a new tmux session.
-ctrl + b, d                   # Detach from that tmux session.
-tmux ls                       # Get a list of your currently running tmux sessions.
-tmux attach -t [session_name] # Attach to an existing session.
+brew install tmux             # Install tmux with homebrew
+tmux new -s [session_name]    # Start a new tmux session
+ctrl + b, d                   # Detach from that tmux session
+tmux ls                       # Get a list of your currently running tmux sessions
+tmux attach -t [session_name] # Attach to an existing session
 ```
+Check out [this](https://gist.github.com/MohamedAlaa/2961058) tmux cheatsheet for
+a reference on a bunch of things tmux can do.
 
 <br>
 
-Now let's use `tmux` to create a local cluster (master and workers) which will
-be running in terminals in the background.
+Now let's use tmux to create a local cluster, master and workers, which run in 
+background terminal sessions.
 
 1. Start a tmux session which will host your master node:
 
@@ -176,9 +179,9 @@ be running in terminals in the background.
 The Master class in `org.apache.spark.deploy.master` accepts the following
 parameters:
 
-   - `h` : host (which on our case is local host `127.0.0.1`)
-   - `p`: The port on which the master is listening in (`7077`)
-   - `webui-port`: The port on which the webui is reachable (`8080`)
+   * `h`: host (local host, `127.0.0.1`, in our case)
+   * `p`: The port on which the master is listening in (`7077`)
+   * `webui-port`: The port on which the web user interface is reachable (`8080`)
 
    <br>
 
@@ -188,19 +191,32 @@ parameters:
    -p 7077 \
    --webui-port 8080
    ```
-3. You should get some output in your terminal similar to the following:
-    <br>
-    <div style="text-align: center"><img src="images/master_term.png" alt="master_term" style="width: 700px"></div>
-    <br>
 
-4. Detach from your master session(`crtl+b, d`). Start a new tmux session which
+   The `${SPARK_HOME}` refers to the environment variable that you set up in your
+   bash profile when you followed the Spark installation instructions.
+
+3. You should get some output in your terminal similar to the following:
+   <br>
+   <div style="text-align: center"><img src="images/master_term.png" alt="master_term" style="width: 700px"></div>
+   <br>
+
+4. Detach from your master session(`crtl+b d`). Start a new tmux session which
    will host your first worker node:
 
    ```bash
    tmux new -s worker1
    ```
 
-5. Start a worker by running the following:
+5. Run the command below to set up a Spark worker connected to the master.
+The Worker class in `org.apache.spark.deploy.worker` accepts the following
+parameters:
+
+   * `c`: the number of cores Spark applications are allowed to use on the worker machine.
+   * `m`: amount of memory Spark applications are allowed to use on the worker machine.
+   * the URL the master is listening on, IP and port. We specified this when we created the
+   master above.
+
+   <br>
 
    ```bash
    ${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker \
@@ -209,32 +225,29 @@ parameters:
    spark://127.0.0.1:7077
    ```
 
-   This will start a worker with 1GB memory and 1 core and attach it to the
-   previously created Spark master. The output in your terminal should be:
+   This will start a worker with access to 1 core and 1 GB of memory and attach it to the
+   previously created Spark master. The output in your terminal should look like:
 
-    <div style="text-align: center"><img src="images/worker_term.png" alt="worker_term" style="width: 700px"></div>
-    <br>
+   <div style="text-align: center"><img src="images/worker_term.png" alt="worker_term" style="width: 700px"></div>
+   <br>
 
-   Detach the current session and create a new session and run the same command
-   to create a second worker.
+6. Detach from the current session, create a new session (name it worker2 this time), 
+and run the same command as in `5` to create a second worker. You should detach from this
+tmux session as well.
 
-6. You have now set up a master with 2 workers locally. Spark also provides us
-   with a web UI that lets us track the Spark jobs and see other stats about
-   any Spark related tasks and workers.
+7. You have now set up a local Spark cluster with a master and 2 workers. Spark 
+also provides a web UI that lets us track our Spark jobs and see other stats 
+about any Spark related tasks and workers. It is available at the port we specified
+when we created the master.
 
    <h3 style="color:red">Your web UI is at: <code>localhost:8080</code></h3>
 
-    <div style="text-align: center"><img src="images/sparkui_first.png" alt="sparkui_first" style="width: 700px"></div>
-    <br>
+   <div style="text-align: center"><img src="images/sparkui_first.png" alt="sparkui_first" style="width: 700px"></div>
+   <br>
 
-7. We are not running any applications with our local Spark cluster yet.
-   We can attach an IPython notebook to the master and start `pyspark` by
-   running the following command. This will start the notebook in the browser
-   and assign 1G of RAM per executor (worker node) and 1G of RAM to the master
-   in our pyspark application. Then, we can interact with `pyspark` via a
-   SparkContext, just like we did in parts 1 and 2 (the difference here is that
-   we actually have worker nodes that our master will communicate with and
-   assign tasks to).
+8. We are not yet running any applications on our local Spark cluster. To interact
+with our cluster we can attach an IPython notebook to the master and start
+`pyspark` by running the command below. 
 
    ```bash
    IPYTHON_OPTS="notebook"  ${SPARK_HOME}/bin/pyspark \
@@ -243,20 +256,24 @@ parameters:
    --driver-memory 1G
    ```
 
-8. A SparkContext has already been loaded into IPython. Access it via the
-variable `sc`.
+This will start the notebook in the browser and assign 1G of RAM per executor,
+worker node, and 1 GB of memory to the master in our pyspark application. Then,
+we can interact with `pyspark` via a SparkContext, just like we did in parts 1
+and 2. The difference here is that we actually have worker nodes that our master 
+will communicate with and assign tasks to.
+
+9. A SparkContext available in the IPython notebook. Access it via the variable `sc`.
 
    You will see an output like below:
 
-   ```python
-   sc
-   pyspark.context.SparkContext at 0x104318250
-   ```
+   <div style="text-align: center"><img src="images/spark_context.png" alt="spark_context" style="width: 700px"></div>
+   <br>
 
-9. Now if you refresh your spark web UI, you should see **`PySparkShell`** running in the list of applications.
+10. Now if you refresh your Spark web UI, you should see **`PySparkShell`** running 
+in the list of applications.
 
-    <div style="text-align: center"><img src="images/running_application.png" alt="running_application" style="width: 700px"></div>
-    <br>
+   <div style="text-align: center"><img src="images/running_application.png" alt="running_application" style="width: 700px"></div>
+   <br>
 
 ##Part 4: Spark for Data Processing
 
