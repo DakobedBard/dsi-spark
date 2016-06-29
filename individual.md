@@ -360,13 +360,11 @@ Now that you've got a feel for looking at the Spark web UI, it may be useful to 
 throughout the rest of the sprint, we can move on to looking at and transforming the data.
 We want to identify airports with the worst / least delays. Consider the following about delays:
 
-* **2 types of delays:**
-    * Arrival delays, `ARR_DELAY`, and departure delays, `DEP_DELAY`.
+* **2 types of delays:** Arrival delays, `ARR_DELAY`, and departure delays, `DEP_DELAY`.
 * All delays are in terms of **minutes**.
 * Arrival delays are associated with the destination airport, `DEST_AIRPORT_ID`.
 * Departure delays are associated with the origin airport, `ORIGIN_AIRPORT_ID`.
 
-<br>
 
 1. As you just saw the `count()` action takes a long time to run. More involved
 commands can take even longer. In order to not waste time when writing/testing
@@ -396,8 +394,8 @@ for the column. Follow the specifications below to make your dictionary.
    * The dictionary will only keep track of the following columns:
 
     `['DEST_AIRPORT_ID', 'ORIGIN_AIRPORT_ID', 'DEP_DELAY', 'ARR_DELAY']`
-   * Cast the values for `DEP_DELAY` and `ARR_DELAY` as floats and take their absolute
-   value. The magnitude of these values correspond with delay lengths in minutes.
+   * Cast the values for `DEP_DELAY` and `ARR_DELAY` as floats. These values
+   correspond with delay lengths in minutes.
    * Subtract `DEP_DELAY` from `ARR_DELAY` to get the actual `ARR_DELAY`.
    * If a flight is `CANCELLED`, add 5 hours, 300 minutes, to `DEP_DELAY`.
    * There are missing values in `DEP_DELAY` and `ARR_DELAY` (i.e. `''`) and
@@ -405,31 +403,44 @@ for the column. Follow the specifications below to make your dictionary.
 
    Map `make_row_dict()` over your RDD to make a new dictionary RDD.
 
-8. Instead of dictionaries, make 2 new RDDs where the items are tuples.
-   The first RDD will contain tuples `(DEST_AIRPORT_ID, ARR_DELAY)`.
-   The other RDD will contain `(ORIGIN_AIRPORT_ID, DEP_DELAY)`.
-   Run a `.first()` or `.take()` to confirm your results.
+5. Instead of dictionaries, make 2 new RDDs where the items are tuples. Remember, much
+of Spark's functionality assumes RDDs to be storing (key, value) tuples.
 
-9. Make 2 RDDs for the mean delay time for origin airports and destination
-   airports. You will need to `groupByKey()` and then take the mean of the
-   delay times for the particular airport (use a `map()` transformation to calculate the mean of each group). This is where having our RDDs be
-   composed of `(key, value)` pairs really helps - it allows us to use the
-   `groupByKey()` method on our RDD.
+   The first RDD will contain tuples `(DEST_AIRPORT_ID, ARR_DELAY)`. The other RDD will contain
+   `(ORIGIN_AIRPORT_ID, DEP_DELAY)`. Run a `first()` or `take()` to confirm your results.
 
-10. Run `rdd.persist()` on the RDDs you made in `9.`. Remember to set the
-   name of the RDD using `.setName()` before running `persist()` (e.g.
-   `rdd.setName('airline_rdd').persist()`). Setting the name will allow you to
-   identify the RDD in the Spark UI. When you cache the RDDs, you make sure that
-   they do not need to be reproduced every time they are called upon.
-   Use `persist()` for RDDs that you are going to repeatedly use.
+6. Using the two RDDs you just created, make 2 RDDs with the mean delay time for
+origin airports and destination airports. You will need to `groupByKey()` and then
+take the mean of the delay times for each airport. Use `mapValues()` to calculate
+the mean of each group's values.
 
-11. Use `rdd.sortBy()` to sort the RDDs by the mean delay time to answer the
-    following questions.
+   This is where having our RDDs be composed of `(key, value)` pairs is very useful.
+   It allows us to use the `groupByKey()` method on our RDD.
 
-    - Top 10 departing airports that have the lowest average delay
-    - Top 10 departing airports that have the highest average delay
-    - Top 10 arriving airports that have the lowest average delay
-    - Top 10 arriving airports that have the highest average delay
+   Note: There is a slightly more performant way of calculating the mean which uses
+   `aggregateByKey()` rather than `groupByKey()`. This transformation models the combinor
+   model that we saw in Hadoop. Unfortunately, the documentation for `aggregateByKey()` is
+   quite poor. Check out [this](http://stackoverflow.com/a/29930162) stack overflow post
+   for a good description for how to use it.
+
+7. Run `cache()` on the RDDs you made. Remember to set the name of the RDD using
+`.setName()` before running `cache()` (e.g. `rdd.setName('airline_rdd').cache()`). Setting
+the name will allow you to identify the RDD in the Spark web UI.
+
+   When you cache the RDDs, you make sure that computations which produced them don't
+   need to be performed every time they are called upon. It is good practice to use `cache()`
+   for RDDs that you are going to repeatedly use.
+
+8. Use `rdd.sortBy()` to sort the RDDs by the mean delay time to answer the
+following questions:
+
+    * What are the top 10 departing airports that have the lowest average delay.
+    * What are the top 10 departing airports that have the highest average delay.
+    * What are the top 10 arriving airports that have the lowest average delay.
+    * What are the top 10 arriving airports that have the highest average delay.
+
+    You'll need to run all the transformations that you tested on the smaller dataset 
+    on the full data set to answer these questions.
 
 
 [RDDs]: http://spark.apache.org/docs/latest/programming-guide.html#resilient-distributed-datasets-rdds
