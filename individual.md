@@ -3,7 +3,7 @@
 Here we will get familiar with the basics of Spark via the Spark Python API, 
 `PySpark`. For now, we will be just working with a single node that will 
 parallelize processes across all of our cores (rather than distributing them 
-across worker nodes). In `Part 3`, we are going to simulate a master-worker
+across worker nodes). In parts 3 and 4, we are going to simulate a master-worker
 cluster to run our jobs.
 
 1. Initiate a `SparkContext`. A `SparkContext` specifies where your cluster is,
@@ -321,10 +321,10 @@ the steps outlined above.
 
    ```python
    import os
-   access_key = os.getenv('AWS_ACCESS_KEY_ID')
-   secret_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+   ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID')
+   SECRET_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 
-   link = 's3n://{}:{}@mortar-example-data/airline-data'.format(access_key, secret_key)
+   link = 's3n://{}:{}@mortar-example-data/airline-data'.format(ACCESS_KEY, SECRET_KEY)
    airline_rdd = sc.textFile(link)
    ```
 
@@ -418,7 +418,7 @@ the mean of each group's values.
    It allows us to use the `groupByKey()` method on our RDD.
 
    Note: There is a slightly more performant way of calculating the mean which uses
-   `aggregateByKey()` rather than `groupByKey()`. This transformation models the combinor
+   `aggregateByKey()` rather than `groupByKey()`. This transformation models the combiner
    model that we saw in Hadoop. Unfortunately, the documentation for `aggregateByKey()` is
    quite poor. Check out [this](http://stackoverflow.com/a/29930162) stack overflow post
    for a good description for how to use it.
