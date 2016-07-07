@@ -431,13 +431,20 @@ the name will allow you to identify the RDD in the Spark web UI.
    need to be performed every time they are called upon. It is good practice to use `cache()`
    for RDDs that you are going to repeatedly use.
 
-8. Use `rdd.sortBy()` to sort the RDDs by the mean delay time to answer the
-following questions:
+8. Perform appropriate actions on your RDDs to answer the following questions:
 
     * What are the top 10 departing airports that have the lowest average delay.
     * What are the top 10 departing airports that have the highest average delay.
     * What are the top 10 arriving airports that have the lowest average delay.
     * What are the top 10 arriving airports that have the highest average delay.
+
+    There are a couple of ways that you can do this. One is by using `sortBy()` and then
+    `take(10)`. However, this is not the most efficient way. Why not?
+
+    The other way, more efficient way to answer this question is with `takeOrdered()`.
+    You'll have to be a little clever to get the highest delays. Check out the
+    [docs](https://spark.apache.org/docs/1.1.1/api/python/pyspark.rdd.RDD-class.html#takeOrdered)
+    for a hint.
 
     You'll need to run all the transformations that you tested on the smaller dataset 
     on the full data set to answer these questions.
