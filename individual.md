@@ -172,7 +172,7 @@ export AWS_SECRET_ACCESS_KEY=YOUR SECRET ACCESS KEY
 ```
 
    Keep in mind that if you ever have to change your keys you'll need to make sure that you
-   update your bash profile.
+   update your bash profile. After a change in `~/.bash_profile`, when in your terminal, use `source ~/.bash_profile` to update your current environment using your changes. Try executing `echo $AWS_ACCESS_KEY_ID` to check if the changes were taken into account.
 
    Now you're ready to load up and explore the data all while becoming more familiar with
    Spark.
