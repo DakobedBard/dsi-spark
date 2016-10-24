@@ -1,183 +1,154 @@
-##Part 1: Machine Learning in Spark
+# Part 1: Machine Learning in Spark
 
-Here we are going to run some Machine Learning Algorithms using MLlib, the Machine
-Learning library for Spark. We are going to build a Naive Bayes model to predict
-the category of a newsgroup article based on its content.
+Here we are going to run some Machine Learning Algorithms using the ML pipeline. We are going to train a Naive Bayes model to discriminate positive and negative reviews based on text.
 
-<br>
+We recommend you to work from a notebook using [miniquizz/install_spark](https://github.com/zipfian/miniquizzes/blob/master/install_spark.md) instructions.
 
-1. Start a local cluster just like you did in the morning assignment. Working from
-   the IPython notebook associated with that cluster, import these libraries:
+## 1.1. Load data from Amazon Reviews json file in a snap
 
-   ```python
-   import string
-   import json
-   import pickle as pkl
-   from pyspark.mllib.feature import HashingTF
-   from pyspark.mllib.regression import LabeledPoint
-   from pyspark.mllib.classification import NaiveBayes
-   from collections import Counter
-   ```
+First, we will work on a local json datafile which contains a limited subset of the Amazon Reviews.
 
-2. Load the text file into an RDD, and map the lines to dictionaries using
-   `json.loads()`. `take()` the first 2 lines to confirm your results.
+1\. Use `sqlContext.read.json()` to create a dataframe that would contain the content of the file `'data/reviews_Musical_Instruments_5.json.gz'`. Check the structure of that dataframe, and the column detected in the json content, by using `.printSchema()`. It should read like :
 
-   ```python
-   import os
-   #This requires you to define environment variables in your 
-   #.bash_profile with the below names:
-   access_key = os.getenv('AWS_ACCESS_KEY_ID')
-   secret = os.getenv('AWS_SECRET_ACCESS_KEY')
-   data_raw = sc.textFile('s3n://%s:%s@sparkdatasets/news.txt' % (access_key, secret))
-   ```
+```
+root
+ |-- asin: string (nullable = true)
+ |-- helpful: array (nullable = true)
+ |    |-- element: long (containsNull = true)
+ |-- overall: double (nullable = true)
+ |-- reviewText: string (nullable = true)
+ |-- reviewTime: string (nullable = true)
+ |-- reviewerID: string (nullable = true)
+ |-- reviewerName: string (nullable = true)
+ |-- summary: string (nullable = true)
+ |-- unixReviewTime: long (nullable = true)
+ ```
 
-3. Check how many partitions are in your RDD by using `.getNumPartitions()`. If
-   it is too low (i.e. 2), you might want to repartition your RDD with
-   [`.repartition()`](https://spark.apache.org/docs/1.1.1/api/python/pyspark.rdd.RDD-class.html#repartition) to a higher number of partitions. While partitioning
-   beyond the number of cores you have does not in theory increase parallelism,
-   it allows you to track your tasks within a job more easily (since this leads to
-   smaller tasks).
+ 3\. From now on, we will keep only the columns `reviewText` and `overall`. Use `.select()` on the dataframe to keep those two only. You can check your transformation using `.printSchema()` again.
 
-4. There are 3 fields in the data: `label`, `label_name`, and `text`.
+## 1.2. Create a `label` for classification and a balanced dataset
 
-   - Make an RDD of unique `(label, label_name)` pairs. This creates a reference
-     of the numeric label to the name of the label. We will need it later.
+ This dataset is made of user reviews and ratings:
 
-   - Make another RDD with `(label, text)`. We will make a bag-of-words
-     and compute term-frequency out of the `text`. The label will be the
-     target we will later train our Naive Bayes on, and the term-frequency
-     will be the feature.
+* the `reviewText` column (string) contains the raw text of the review.
+* the `overall` column (double) contains the rating given by the user, in `{1.0, 2.0, 3.0, 4.0, 5.0}`
 
-5. Tokenize your text by mapping the following functions:
+1\. Using `.groupBy()` and `.agg()`, count the number of reviews in each rating value.
 
-   - Lower casing the text
-   - Removing punctuations
-   - Removing stop words
-   - Splitting on white spaces
-   - Stemming the tokenized words
+2\. We are going to focus on extreme ratings `{1.0, 5.0}`. Using your count, identify how much examples in each of these two classes we need to keep to build a balanced set of examples having the same number of reviews in `1.0` and `5.0`.
 
-   Feel free to use `nltk`. Also feel free to wrap all of the functions in one
-   big function and then map that over your RDD. If you get stuck or bogged down
-   with errors, try building up and mapping your function across the RDD one piece
-   at a time, checking with `.take(1)` that you get your intended results after
-   each piece.
+3\. By using `.filter()` on your dataframe create two dataframes:
 
-6. You should now have a `(key, value)` pair RDD where the `key` is the numeric
-   value that represents the category (i.e. label) of newsgroup of the article and the `value`
-   is a list of the stemmed words of the article.
+* one for the reviews having an `overall` of `1.0` (we will call them the `neg` class),
+* another for the reviews having an `overall` of `5.0` (we will call them the `pos` class).
 
-   Create a new RDD where the key remains the category and the value is the
-   term-frequency (TF) vector for each article. This is going to require some
-   thinking, and comes with some caveats. You may not use the built-in
-   `HashingTF()` (we'll use this in a second), nor use `collect()` on the
-   whole corpus. You are only allowed to do a `collect()` of an RDD that
-   contains the vocab of the corpus. This exercise will be good practice for
-   when you want to perform other very complicated manipulations on an RDD for
-   which there are not built-ins like the `HashingTf()`.
+Limit the number of reviews in each dataframe by the number you have identified previously. Be sure to shuffle those reviews before you apply your limit (you can use `.orderBy(rand())` for that).
 
-   Here are some functions you might want to consider (not necessarily in order)
-   to implement TF.
+Using `.union()` between dataframes, create a single dataframe containing the samples from both the balanced `neg` and `pos` classes.
 
-   - `.values()`
-   - `.flatMap()`
-   - `.distinct()`
-   - `.mapValues()`
-   - `Counter()` (Python class)
+4\. Using `.withColumn()` create a new column called `label` that has a value of `0.0` for the `neg` class, and `1.0` for the `pos` class.
 
-7. Now let's use `HashingTF()` to get the word vector in order to confirm
-   that your implementation is correct. Your first row should have a sum of 186
-   words. You cannot compare the actual word vec since `HashingTF()` would have
-   mixed up the ordering of the vocab.
+5\. Check your dataframe at this step using `.printSchema()`. It should look like:
 
-      ```python
-   ### Using HashingTF() with 10000 features ###
-   htf = HashingTF(10000)
-   word_vecs_rdd = words_rdd.mapValues(htf.transform)
-   word_vecs_rdd.count()
-   ```
+```
+root
+ |-- reviewText: string (nullable = true)
+ |-- overall: double (nullable = true)
+ |-- label: double (nullable = true)
+```
 
-   One advantage with your implementation is that you have access to the actual
-   vocab itself, whereas `HashingTF()` has obscured the words by hashing them.
+## 1.3. Build a step by step text indexation pipeline
 
-8. Spark uses a `LabeledPoint(target, feature)` object to store the target (numeric)
-   and features (numeric vector) for all machine learning algorithms. So that we
-   can fit a NaiveBayes, make a new RDD by mapping `LabeledPoint(target, feature)`
-   to the RDD and keep the new RDD in cache using `persist()`. Remember to `setName()`
-   before you persist. The `feature` is the TF vector.
+We are now going to index each reviews by its `reviewText` using an nlp indexation pipeline.
 
-9. Use `randomSplit()` (RDD built-in method) to do a train test split of `70:30`.
+1\. Create a function `preprocess_raw_text()` that takes a string as an input, and outputs the tokens of the text using the following operations :
 
-10. Train the `NaiveBayes` model on the train data set. See the [docs](http://spark.apache.org/docs/1.2.0/api/python/pyspark.mllib.html#module-pyspark.mllib.classification)
-    here. The  `NaiveBayes` model is a Python class, and once it is trained, it
-    can be used like a Python class.
+* tokenizing the text using punctuation
+* removing stopwords
+* stemming each word to reduce it to its root
 
-11. Map the `predict()` method of the `NaiveBayes` model onto the test set
-    features to get predictions. Calculate the accuracy of the predictions.
-    Your accuracy should be above 80%.
+You should use the `nltk` library or the `pattern` library to do that.
 
-    If this is taking too long. Reference the timeline of my runtime shown below.
+**Recommendation**: use any paragraph of (real) raw text to test your function before going on the next step.
 
-    ![image](images/log.png)
+2\. In order to apply a function to the values in an RDD, you used `.map()` with a lambda function, or your own. DataFrames let you do that within a `.withColumn()`, using a container called `udf` for User Defined Function (it's in the `pyspark.sql.functions` module).
 
-12. Examine the predictions that are incorrect. Use the dictionary you have created
-    in `4.` to get the `label_name` of those predictions. Examine the content of
-    the incorrect predictions and try to reason why the content is incorrectly
-    predicted.
+For a function of your own design, you need to create a `udf` by specifying the type of the output valuesof your function. This is required so that the dataframe knows what type the new column will be in the dataframe schema. For your `preprocess_raw_text()` function, the return type would be `ArrayType(StringType())` (from the `pyspark.sql.types` module). This would look like :
 
-If you'd like to read more about textual feature extraction and implementing
-tf-idf using the PySpark built-ins, check out [this resource](https://spark.apache.org/docs/1.2.0/mllib-feature-extraction.html).
+```python
+from pyspark.sql.functions import udf
+from pyspark.sql.types import ArrayType, StringType
 
-<br>
+tokenizer_udf = udf(lambda x : preprocess_raw_text(x), ArrayType(StringType()))
+```
 
-##Extra Credit: Word2Vec
+You can now apply this `tokenizer_udf` function in a `.withColumn()` transformation to create a column named `'tokens'` containing the list of tokens extracted from the `'reviewText'` column.
 
-Spark also has a [Word2Vec implementation](https://spark.apache.org/docs/1.2.0/mllib-feature-extraction.html). Word2Vec is
-the name given to a class of neural network models that, given an unlabelled
-training corpus, produces a vector for each word in the corpus that encodes
-its semantic information. Word2Vec is a technique to get vector representations
-of words through unsupervised training (i.e regardless of the category / class
-of the article). Word2Vec has 2 implementations:
+At this step, `.printSchema()` should read :
+```
+root
+ |-- reviewText: string (nullable = true)
+ |-- overall: double (nullable = true)
+ |-- label: double (nullable = true)
+ |-- tokens: array (nullable = true)
+ |    |-- element: string (containsNull = true)
+```
 
-* Using the [skip-gram model](http://alexminnaar.com/word2vec-tutorial-part-i-the-skip-gram-model.html), where given 1 word, we try to
-predict the likelihood of surrounding words.
-* Using a continuous bag of words, where the likelihood of the current word is
-being predicted based on neighboring words.
+3\. The basics of ML pipelining in spark relies on building step by step instances of classes drawn from the `pyspark.ml` library. Among these classes we are going to use the following :
 
-Both of these models are simple neural networks with one hidden layer. The word
-vectors are learned via backpropagation and stochastic gradient descent
+* [`pyspark.ml.feature.CountVectorizer`](http://spark.apache.org/docs/latest/api/python/pyspark.ml.html#pyspark.ml.feature.CountVectorizer) : computes term frequency vertors from a lists of tokens
+* [`pyspark.ml.feature.IDF`](http://spark.apache.org/docs/latest/api/python/pyspark.ml.html#pyspark.ml.feature.IDF) : computes inverse document frequences on term frequency vectors
+* [`pyspark.ml.classification.NaiveBayes`](http://spark.apache.org/docs/latest/api/python/pyspark.ml.html#pyspark.ml.classification.NaiveBayes) : implements the Naive Bayes algorithm
 
-<br>
+The syntax is usually the same for these classes :
 
-1. To train a Word2Vec model, we need training data. Load in the data as follows:
+1. you create an instance `i` specifying input and output columns, plus necessary keyword arguments specific to the class
+2. you fit the instance `i` on your dataframe with a `i.fit()` method, fitting will return a model `m`
+3. you apply the model `m` on your dataframe using `m.transform()`
 
-   ```python
-   data = sc.textFile('s3n://[YOUR_AWS_ACCESS_KEY_ID]:[YOUR_AWS_SECRET_ACCESS_KEY]@sparkdatasets/text8_lines')
-   ```
+As an example for the `IDF` class, `i.fit()` computes the global document frequencies over term the frequency vectors, then `m.transform()` applies the inverse document frequencies over all vectors.
 
-2. Import and instantiate a `Word2Vec()` class.
+Look for the definitions of these classes in the spark documentation. For each class you should :
 
-   ```python
-   from pyspark.mllib.feature import Word2Vec
-   word2vec = Word2Vec()
-   ```
+* identify the arguments (input/output + parameters) you need to provide.
+* identify the right values for these arguments.
 
-3. Fit the `Word2Vec()` class with an RDD where each item is a list of words
-   from each article. The model will take a while to train (~10 - 20 mins).
-   However, once the model is trained, it does not have to be re-trained.
-   It can be used as a normal Python class.
+As a starter, the following table gives you the input/output arguments for each class.
 
-4. One of common uses of Word2Vec is to find words similar in context to a word
-   in question. Call the `findSynonyms()` function of the model and provide the
-   word in question as the first argument and the number of most similar words
-   to extract as the second argument.
+| Class | input column(s) argument | output column argument | keyword arguments... |
+|-------|------------|-------------|----------------------|
+| [`CountVectorizer`](http://spark.apache.org/docs/latest/api/python/pyspark.ml.html#pyspark.ml.feature.CountVectorizer) | `inputCol` | `outputCol` | ? |
+| [`IDF`](http://spark.apache.org/docs/latest/api/python/pyspark.ml.html#pyspark.ml.feature.IDF) | `inputCol` | `outputCol` | ? |
+| [`NaiveBayes`](http://spark.apache.org/docs/latest/api/python/pyspark.ml.html#pyspark.ml.classification.NaiveBayes) | `featuresCol` + `labelCol` | `predictionCol` | ? |
 
-5. The result is a tuple of `(words, cos similarity)`. Print out the words closest
-   to `general`. Try out other words you like.
 
-6. The `Word2Vec` class also has transform method that takes a word and transforms
-   it to the word vector which is the output of the hidden layer as discussed. This
-   allows us to do other things such as clustering words that potentially have
-   similar context.
+4\. Implement the `CountVectorizer` using your `inputCol` and `outputCol` and keyword arguments. In the returned model, you can access the vocabulary by accessing the internal list `model.vocabulary`. This list is ordered identically as the index of the vectors created by the model. So if you need to find which word correspond to which index of the vector, you can use this list as a reverse table.
 
-7. Check out [Gensim's](http://radimrehurek.com/2014/02/word2vec-tutorial/)
-   Word2Vec implementation as well if you are interested.
+5\. Implement the `IDF` using your `inputCol` and `outputCol` and keyword arguments.
+
+At the end of this process, use `.printSchema()` to verify your schema. It should read like this :
+
+```
+root
+ |-- reviewText: string (nullable = true)
+ |-- overall: double (nullable = true)
+ |-- label: double (nullable = true)
+ |-- tokens: array (nullable = true)
+ |    |-- element: string (containsNull = true)
+ |-- ******1******: vector (nullable = true)
+ |-- ******2******: vector (nullable = true)
+```
+
+(replace `*****1*****` above by the output column for `CountVectorizer` and `*****2*****` by the output column for `IDF`).
+
+6\. Before applying the `NaiveBayes` algorithm we will split our dataset into one training set and one testing set using a random split of 70/30. Use [`.randomSplit()`](http://spark.apache.org/docs/latest/api/python/pyspark.sql.html#pyspark.sql.DataFrame.randomSplit) to create two distinct dataframes for each of those sets.
+
+**Note**: You can use `.persist()` to create a persistent training set before applying `NaiveBayes`.
+
+7\. Implement `NaiveBayes` specifying the columns for features (`featureCol`), labels (`labelCol`) and prediction (`predictionCol`). Then `.fit()` to obtain a model, and apply this model on the testing test.
+
+8\. Use the [`MulticlassClassificationEvaluator`](http://spark.apache.org/docs/latest/api/python/pyspark.ml.html#pyspark.ml.evaluation.MulticlassClassificationEvaluator) to obtain an evaluation of the accuracy of your classification.
+
+As any other brick in your pipeline, `MulticlassClassificationEvaluator` needs to have columns specified, and some other arguments you need to identify in the documentation. Then, you will need to apply your instance on the prediction and label columns, by using `.evaluate()`. It will compute accuracy (or any other given metric) based on the differences observed between these two columns.
+
+9\. The `NaiveBayes` model provides an internal matrix `model.theta` that you can convert into a numpy array with `model.theta.toArray()`. Use this numpy array to obtain words that are related to the `pos` class, and words that are related to the `neg` class. **Hint**: use `CountVectorizer`'s output vocabulary for that (see question 4).
