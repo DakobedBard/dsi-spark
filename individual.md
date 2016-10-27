@@ -226,7 +226,7 @@ Test it with the string `'a,b,0.7,"Oct 7, 2016",42,'`, your function should retu
 
 **Note:** you can test your implementation of this function using the doctest module. In a terminal, run `python -m doctest -v spark_intro.py` to check if your function passes the test defined in the docstring section.
 
-One your function works, use `.map()` to apply it to your RDD. Print the first 2 lines, with `take(2)`, to confirm you've cleaned the rows correctly. The first 2 lines should look like the following.
+Once your function works, use `.map()` to apply it to your RDD. Print the first 2 lines, with `take(2)`, to confirm you've cleaned the rows correctly. The first 2 lines should look like the following.
 
    ```
    [['YEAR', 'MONTH', 'UNIQUE_CARRIER', 'ORIGIN_AIRPORT_ID', 'DEST_AIRPORT_ID', 'DEP_DELAY', 'DEP_DELAY_NEW', 'ARR_DELAY', 'ARR_DELAY_NEW', 'CANCELLED', ''],
