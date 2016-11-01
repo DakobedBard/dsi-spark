@@ -4,6 +4,6 @@
 * Appreciate the difference between Spark and Hadoop MapReduce
 * Practice Functional Programming in Spark
 * Use RDDs in Spark
-* Experience Spark MLlib API (Naive Bayes and Word2Vec)
+* Experience Spark ML API (TFIDF + Naive Bayes)
 
-**Consistent with: Spark 1.5.0**
+**Consistent with: Spark 2.0.1**
