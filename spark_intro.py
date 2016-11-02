@@ -22,22 +22,22 @@ def parse_json_first_key_pair(json_string):
     """
     pass
 
-# Part 2.1
-def parse_json_first_key_pair(json_string):
-    """Returns the first (key,value) pair from a json encoded dictionary.
+# Part 3.2.2
+def split_csvstring(input_string):
+    """Parse a csv-like line and break the values into a list.
 
     Parameters
     ----------
-    json_string (str): a string encoding a json dictionary
+    input_string (str): a csv-like string to work on
 
     Returns
     -------
-    [k,v]: the first key (k) and value (v) pair in the input json dict
+    list : the list of the values
 
     Example
     -------
-    >>> parse_json_first_key_pair(u'{"Jane": "2"}')
-    (u'Jane', 2)
+    >>> split_csvstring(u'a,b,0.7,"Oct 7, 2016",42,')
+    ['a', 'b', '0.7', 'Oct 7, 2016', '42', '']
     """
     pass
 
