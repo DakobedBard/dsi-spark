@@ -4,6 +4,8 @@
 * Appreciate the difference between Spark and Hadoop MapReduce
 * Practice Functional Programming in Spark
 * Use RDDs in Spark
-* Experience Spark ML API (TFIDF + Naive Bayes)
+
+* Introduction to Spark DataFrame
+* Use SQL in Spark
 
 **Consistent with: Spark 2.0.1**
