@@ -184,7 +184,7 @@ export AWS_SECRET_ACCESS_KEY=YOUR SECRET ACCESS KEY
    Now you're ready to load up and explore the data all while becoming more familiar with
    Spark.
 
-   ### 3.1: Loading Data from an S3 bucket
+### 3.1: Loading Data from an S3 bucket
 
    1\. Load the data from S3 as follows. **Note**: As discussed above, loading won't work if either of your AWS keys contain a slash. Generate a new pair if necessary by following the steps outlined above.
 
@@ -220,13 +220,13 @@ We want to identify airports with the worst / least delays. Consider the followi
 
 2\. Let's do some preprocessing and parsing. You may have noticed that those rows are in fact csv lines. We are going to parse those lines one by one and output a list of the values we can split from those lines.
 
-In order to do that, you'll find a template function `split_csvstring` in the `spark_intro.py` file. Implement this function that takes a string that contains a csv line, and output the list of values contained in the line. You can use a combination of the `csv` module function `csv.reader()` and the `StringIO` module.
+In order to do that, you'll find a function `split_csvstring` in the `spark_intro.py` file. This function has been implemented for you already: it takes a string that contains a csv line, and outputs the list of values contained in the line. It uses a combination of the `csv` module function `csv.reader()` and the `StringIO` module.
 
-Test it with the string `'a,b,0.7,"Oct 7, 2016",42,'`, your function should return `['a', 'b', '0.7', 'Oct 7, 2016', '42', '']`
+Test it with the string `'a,b,0.7,"Oct 7, 2016",42,'`, it should return `['a', 'b', '0.7', 'Oct 7, 2016', '42', '']`
 
-**Note:** you can test your implementation of this function using the doctest module. In a terminal, run `python -m doctest -v spark_intro.py` to check if your function passes the test defined in the docstring section.
+**Note:** you can test this function using the doctest module. In a terminal, run `python -m doctest -v spark_intro.py` to check if your function passes the test defined in the docstring section.
 
-Once your function works, use `.map()` to apply it to your RDD. Print the first 2 lines, with `take(2)`, to confirm you've cleaned the rows correctly. The first 2 lines should look like the following.
+Once you're sure the function works, use `.map()` to apply it to your RDD. Print the first 2 lines, with `take(2)`, to confirm you've cleaned the rows correctly. The first 2 lines should look like the following.
 
    ```
    [['YEAR', 'MONTH', 'UNIQUE_CARRIER', 'ORIGIN_AIRPORT_ID', 'DEST_AIRPORT_ID', 'DEP_DELAY', 'DEP_DELAY_NEW', 'ARR_DELAY', 'ARR_DELAY_NEW', 'CANCELLED', ''],
