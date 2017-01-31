@@ -48,7 +48,7 @@ def split_csvstring(input_string):
     # obtains the first line of the reader (which should be the only line)
     row_values = reader.next()
 
-    return row_values    
+    return row_values
 
 # Part 3.2.4
 def make_row_dict(row_values, col_names, keep_keys_set):
@@ -87,8 +87,13 @@ def transformation_pipeline(input_raw_rdd):
     """
 
 if __name__ == "__main__":
-    # we try to create a SparkContext to work locally on all cpus available
-    sc = ps.SparkContext('local[4]')
+    # we try to create a SparkSession to work locally on all cpus available
+    spark = ps.sql.SparkSession.builder \
+            .master("local[4]") \
+            .appName("individual") \
+            .getOrCreate()
+
+    sc = spark.sparkContext
     sc.setLogLevel('ERROR')
 
     # obtain the AWS credentials from system
