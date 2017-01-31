@@ -22,7 +22,7 @@ Create a variable `sc` using the following line. It will let you use `sc` as a `
 sc = spark.sparkContext
 ```
 
-2\. Spark operates in **[Resilient Distributed Datasets (RDDs)][RDDs]. An RDD is
+2\. Spark operates in **[Resilient Distributed Datasets](http://spark.apache.org/docs/latest/programming-guide.html#resilient-distributed-datasets-rdds) (RDDs). An RDD is
 a collection of data partitioned across machines**. RDDs allow the processing
 of data to be parallelized due to the partitions. RDDs can be created from
 a SparkContext in two ways: loading an external dataset, or by parallelizing
@@ -73,7 +73,7 @@ lst_rdd.collect()
 
 ## Part 2: Intro to Functional Programming
 
-Spark operations fit within the [functional programming paradigm][funct-programming].
+Spark operations fit within the [functional programming paradigm](https://en.wikipedia.org/wiki/Functional_programming).
 In terms of our RDD objects, this means that our RDD objects are immutable and that
 anytime we apply a **transformation** to an RDD (such as `.map()`, `.reduceByKey()`,
 or `.filter()`) it returns another RDD.
@@ -88,14 +88,14 @@ a result to be returned.
   * A lot of Spark's functionalities assume the items in an RDD to be tuples
   of `(key, value)` pairs, so often times it can be useful to structure your
   RDDs this way.
-  * Beware of [lazy evaluation][wiki-lazy-eval], where transformations
+  * Beware of [lazy evaluation](https://en.wikipedia.org/wiki/Lazy_evaluation), where transformations
   on the RDD are not executed until an **action** is executed on the RDD
   to retrieve items from it (such as `.collect()`, `.first()`, `.take()`, or
   `.count()`). So if you are doing a lot transformations in a row, it can
   be helpful to call `.first()` in between to ensure your transformations are
   running properly.
   * If you are not sure what RDD transformations/actions there are, you can
-  check out the [docs][RDD-docs].
+  check out the [docs](https://spark.apache.org/docs/latest/api/python/pyspark.html#pyspark.RDD).
 
 **Steps**:
 
@@ -107,7 +107,7 @@ a result to be returned.
 3\. For each name, return the entry with the max number of cookies.
 
 **Hint**:
-* Use `.reduceByKey()` instead of `.groupByKey()`. See why [here][groupby-v-reduceby-key].
+* Use `.reduceByKey()` instead of `.groupByKey()`. See why [here](https://databricks.gitbooks.io/databricks-spark-knowledge-base/content/best_practices/prefer_reducebykey_over_groupbykey.html).
 * You may get a warning saying that you should install `psutil`. You can with
 `pip install psutil`.
 
@@ -163,6 +163,26 @@ airline_rdd = sc.textFile(link)
 
 **Note**: If you ever encounter an issue using your AWS credentials, and if you want to skip that at this point to save time on the assignment, you'll find an extract of that dataset (100 lines) in `data/airline-data-extract.csv`. You can use this extract to develop your complete pipeline and solve your issue later on. Use `airline_rdd = sc.textFile("data/airline-data-extract.csv")` to transform that extract into an RDD.
 
+---
+
+**NOTE**: In order to load data from s3, we need to launch our spark session with the `--packages` options for interfacing with aws and hadoop.  For Example:
+
+```bash
+export PYSPARK_DRIVER_PYTHON=jupyter
+export PYSPARK_DRIVER_PYTHON_OPTS="notebook --NotebookApp.open_browser=True --NotebookApp.ip='localhost' --NotebookApp.port=8888"
+
+${SPARK_HOME}/bin/pyspark \
+    --master local[4] \
+    --executor-memory 1G \
+    --driver-memory 1G \
+    --conf spark.sql.warehouse.dir="file:///tmp/spark-warehouse" \
+    --packages com.databricks:spark-csv_2.11:1.5.0 \
+    --packages com.amazonaws:aws-java-sdk-pom:1.10.34 \
+    --packages org.apache.hadoop:hadoop-aws:2.7.3
+```
+
+---
+
 2\. Print the first 2 entries with `.take(2)` on `airline_rdd`. The first entry is the column names and starting with the second we have our data.
 
 3\. Now run `.count()` on the RDD. **This will take a while**, as the data set is a few million rows and it all must be downloaded from S3.
@@ -208,7 +228,7 @@ correspond with delay lengths in minutes.
 * There are missing values in `DEP_DELAY` and `ARR_DELAY` (i.e. `''`) and
  you would want to replace those with `0.0`.
 
-You'll find a template function `make_row_dict` in the `spark_intro.py` file with a `doctest` you can try to make it work, usin `python -m doctest -v spark_intro.py`.
+You'll find a template function `make_row_dict` in the `spark_intro.py` file with a `doctest` you can try to make it work, using `python -m doctest -v spark_intro.py`.
 
 Now use `.map()` with your function  `make_row_dict()` over your RDD to make a new RDD made of dictionaries.
 
@@ -245,7 +265,7 @@ There are a couple of ways that you can do this. One is by using `sortBy()` and 
 
 The other way, more efficient way to answer this question is with `takeOrdered()`.
 You'll have to be a little clever to get the highest delays. Check out the
-[docs](https://spark.apache.org/docs/1.1.1/api/python/pyspark.rdd.RDD-class.html#takeOrdered)
+[docs](https://spark.apache.org/docs/latest/api/python/pyspark.html#pyspark.RDD.takeOrdered)
 for a hint.
 
 You'll need to run all the transformations that you tested on the smaller dataset
