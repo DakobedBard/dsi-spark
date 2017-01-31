@@ -5,36 +5,24 @@ Here we will get familiar with the basics of Spark via the Spark Python API,
 parallelize processes across all of our cores (rather than distributing them
 across worker nodes).
 
-1\. Initiate a `SparkContext`. A `SparkContext` specifies where your cluster is,
-   i.e. the resources for all your distributed computation. Specify your
-   `SparkContext` as follows.
+1\. Initiate a `SparkSession`. A `SparkSession` embeds both a `SparkContext` and a `SQLContext` to use RDD-based and DataFrame-based functionalities of Spark. Specify your `SparkSession` as follows.
 
-   ```python
-   import pyspark as ps
-   # Uses all 4 cores on your machine
-   sc = ps.SparkContext('local[4]')
-   ```
+    ```python
+    import pyspark as ps
 
-   **Note**: If you're running this from a jupyter notebook launched via `pyspark`,
-   then this `sc` object will have already been created. To systematize your initiation, you can also use the following code:
+    spark = ps.sql.SparkSession.builder \
+            .master("local[4]") \
+            .appName("df lecture") \
+            .getOrCreate()
+    ```
 
-```python
-import pyspark as ps    # for the pyspark suite
-import warnings         # for displaying warning
+Create a variable `sc` using the following line. It will let you use `sc` as a `sparkContext` for compatibility with pre-2.0 RDD-based spark commands.
 
-try:
-   # we try to create a SparkContext to work locally on all cpus available
-   sc = ps.SparkContext('local[4]')
-   print("Just created a SparkContext")
-except ValueError:
-   # give a warning if SparkContext already exists (for use inside pyspark)
-   warnings.warn("SparkContext already exists in this scope")
-```
+    ```
+    sc = spark.sparkContext
+    ```
 
-  This code will issue a warning (instead of an error) if the `sc` object already exists.
-
-   **Note (2)**: You may not have 4 cores on your machine, and if you don't you should adjust how many cores you are telling the SparkContext to use. To find out
-   how many you have, you can run:
+   **Note**: You may not have 4 cores on your machine, and if you don't you should adjust how many cores you are telling the SparkSession to use. To find out how many you have, you can run:
 
 ```python
 import multiprocessing

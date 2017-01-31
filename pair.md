@@ -9,7 +9,7 @@ then be queried as a SQL table.
 
 ### 1. Validate your AWS CLI configuration
 
-This exercise requires Spark 2 to be installed on your computer. If you have not yet installed Spark 2, refer to the [install_spark miniquiz](https://github.com/zipfian/miniquizzes/blob/master/install_spark.md) for instructions.
+This exercise requires Spark 2 to be installed on your computer. If you have not yet installed Spark 2, refer to the [installation guidelines](https://github.com/zipfian/spark-install) for instructions.
 
 At your computer's bash terminal, run `aws s3 ls sparkdatasets` to confirm that you have `awscli` installed and configured correctly on your computer. You should see a listing of the contents of the `sparkdatasets` bucket:
 
@@ -38,7 +38,7 @@ Run `bash scripts/jupyspark.sh`. This script starts a PySpark-enabled Jupyter No
 
 ### 3. Load data into a Spark DataFrame.
 
-  Use the s3a filesystem type to load the dataset using the same stored
+1\. Use the s3a filesystem type to load the dataset using the same stored
   credentials used by the AWS CLI client. This eliminates the need to
   manage your AWS access keys manually in your Python code.
 
@@ -51,7 +51,7 @@ Run `bash scripts/jupyspark.sh`. This script starts a PySpark-enabled Jupyter No
 
    Note: if you have not configured your AWS CLI correctly, this will not work for you. An alternate approach for reading this file is to [download it locally](https://s3.amazonaws.com/sparkdatasets/yelp_academic_dataset_business.json) and use the the `.read.json()` method on the local file. However, this approach is NOT recommended because it does not scale to larger datasets.
 
-2. Print the schema and register the `yelp_business_df` as a temporary
+2\. Print the schema and register the `yelp_business_df` as a temporary
 table named `yelp_business` (this will enable us to query the table later using
 our `SparkSession()` object).
 
@@ -67,18 +67,21 @@ our `SparkSession()` object).
     result.show()
     ```
 
-3. Write a query that returns the `name` of entries that fulfill the following
+3\. Write a query or a sequence of transformations that returns the `name` of entries that fulfill the following
 conditions:
 
-   - Rated at 5 `stars`
-   - In the `city` of Phoenix
-   - Accepts credit card (Reference the `Accepts Credit Card` field by
-   ````attributes.`Accepts Credit Cards`````)
-   - Contains Restaurants in the `categories` array.  
+- Rated at 5 `stars`
+- In the `city` of Phoenix
+- Accepts credit card (Reference the `'Accepts Credit Card'` field by
+``` attributes.`Accepts Credit Cards` ```)
+- Contains Restaurants in the `categories` array.  
 
-   Hint: `LATERAL VIEW explode()` can be used to access the individual elements
-   of an array (i.e. the `categories` array). For reference, you can see the
-   [first example][lateral-view] on this page.
+Hint: `LATERAL VIEW explode()` can be used to access the individual elements
+of an array (i.e. the `categories` array). For reference, you can see the
+[first example](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+LateralView) on this page.
+
+Hint: In spark, while using `filter()` or `where()`, you can create a condition that tests if a column, made of an array, contains a given value. The functions is [pyspark.sql.functions.array_contains](http://spark.apache.org/docs/latest/api/python/pyspark.sql.html#pyspark.sql.functions.array_contains).
+
 
 <br>
 
@@ -86,25 +89,20 @@ conditions:
 
 Now that we have a basic knowledge of how SparkSQL works, let's try dealing with a real-life scenario where some data manipulation/cleaning is required before we can query the data with SparkSQL. We will be using a dataset of user information and a data set of purchases that our users have made. We'll be cleaning the data in a regular Spark RDD before querying it with SparkSQL.
 
-1. Load the `user` and `transaction` datasets into 2 separate RDDs with the
-following code.
+1\. Load a dataframe `users` from S3 link `''s3a://sparkdatasets/users.txt'` (no credentials needed) using `spark.read.csv` with the following parameters: no headers, use separator `";"`, and infer the schema of the underlying data (for now). Use `.show(5)` and `.printSchema()` to check the result.
 
-   ```python
-   user_rdd = sc.textFile('s3a://sparkdatasets/users.txt')
-   transaction_rdd = sc.textFile('s3a://sparkdatasets/transactions.txt')
-   ```
+2\. Create a schema for this dataset using proper names and types for the columns, using types from the `pyspark.sql.types` module (see lecture). Use that schema to read the `users` dataframe again and use `.printSchema()` to check the result.
 
-2. Each row in the `user` RDD represents the user with his/her `user_id, name, email, phone`. Each row in the `transactions` RDD has the columns  `user_id, amount_paid, date`. Map a function to the `user` RDD to make each row in the RDD a json **string** of the form `{user_id: XXX, name: XXX, email:XXX, phone:XXX}` (use `json.dumps()`). Map a function to the `transactions` RDD to make each row a json **string** of the form `{user_id: XXX, amount_paid: XXX.XX, date: XXX}`.  
+Note: Each row in the `users` file represents the user with his/her `user_id, name, email, phone`.
 
-   **Hint: Strip the `$` sign in the `amount_paid` column in the `transactions`
-   RDD so it will be recognized as a float when read into a Spark DataFrame.**
+3\. Load an RDD `transactions_rdd` from S3 link `''s3a://sparkdatasets/transactions.txt'` (no credentials needed) using `spark.sparkContext.textFile`. Use `.take(5)` to check the result.
 
-3. Convert the `user` and `transactions` RDDs to Spark DataFrames (use the
-   `.read.json()` method on your `SparkSession` object). Print the schemas
-   to make sure the conversion is successful. Register the Spark DataFrames as
-   separate tables and print the first couple of rows with SQL queries.
+Use `.map()` to split those csv-like lines, to strip the dollar sign on the second column, and to cast each column to its proper type.
 
-4. Write a SQL query to return the names and the amount paid for the users with
-   the **top 10** transaction amounts.
+4\. Create a schema for this dataset using proper names and types for the columns, using types from the `pyspark.sql.types` module (see lecture). Use that schema to convert `transactions_rdd` into a dataframe `transactions`  and use `.show(5)` and `.printSchema()` to check the result.
+
+Each row in the `transactions` file has the columns  `user_id, amount_paid, date`.
+
+5\. Write a sequence of transformations or a SQL query that returns the names and the amount paid for the users with the **top 10** transaction amounts.
 
 [lateral-view]: https://cwiki.apache.org/confluence/display/Hive/LanguageManual+LateralView
