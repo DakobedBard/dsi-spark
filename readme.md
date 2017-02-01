@@ -8,4 +8,4 @@
 * Introduction to Spark DataFrame
 * Use SQL in Spark
 
-**Consistent with: Spark 2.0.1**
+**Consistent with: Spark 2.1.0**

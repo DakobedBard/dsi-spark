@@ -28,7 +28,7 @@ conditions:
    - Rated at 5 `stars`
    - In the `city` of Phoenix
    - Accepts credit card (Reference the `'Accepts Credit Card'` field by
-   ``` attributes.`Accepts Credit Cards` ```)
+   ``` attributes.`Accepts Credit Cards` ```.  **NOTE**: We are actually looking for the value `'true'`, not the boolean value True!)
    - Contains Restaurants in the `categories` array.  
 
    Hint: `LATERAL VIEW explode()` can be used to access the individual elements
@@ -49,7 +49,7 @@ Now that we have a basic knowledge of how SparkSQL works, let's try dealing with
 Note: Each row in the `users` file represents the user with his/her `user_id, name, email, phone`.
 
 3\. Load an RDD `transactions_rdd` from S3 link `''s3a://sparkdatasets/transactions.txt'` (no credentials needed but if you encounter any problem just use local copy `data/transactions.txt` instead) using `spark.sparkContext.textFile`. Use `.take(5)` to check the result.
-   
+
 Use `.map()` to split those csv-like lines, to strip the dollar sign on the second column, and to cast each column to its proper type.
 
 4\. Create a schema for this dataset using proper names and types for the columns, using types from the `pyspark.sql.types` module (see lecture). Use that schema to convert `transactions_rdd` into a dataframe `transactions`  and use `.show(5)` and `.printSchema()` to check the result.
