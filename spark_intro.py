@@ -1,7 +1,12 @@
 import pyspark as ps    # for the pyspark suite
 import json             # for parsing json formatted data
-import StringIO, csv    # for the split_csvstring function from Part 3.2.2
+import csv              # for the split_csvstring function from Part 3.2.2
+try:                    # Python 3 compatibility
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 import os               # for accessing env variables for AWS credentials
+
 
 # Part 2.1
 def parse_json_first_key_pair(json_string):
@@ -22,6 +27,7 @@ def parse_json_first_key_pair(json_string):
     """
     pass
 
+
 # Part 3.2.2
 def split_csvstring(input_string):
     """Parse a csv-like line and break the values into a list.
@@ -39,7 +45,17 @@ def split_csvstring(input_string):
     >>> split_csvstring(u'a,b,0.7,"Oct 7, 2016",42,')
     ['a', 'b', '0.7', 'Oct 7, 2016', '42', '']
     """
-    pass
+
+    # we create a StringIO handler
+    fio = StringIO(input_string)
+    # and feed that into the csv.reader library which is (probably) the best way to parse those strings
+    reader = csv.reader(fio, quotechar='"', delimiter=',',quoting=csv.QUOTE_ALL, skipinitialspace=True)
+
+    # obtains the first line of the reader (which should be the only line)
+    row_values = next(reader)
+
+    return row_values
+
 
 # Part 3.2.4
 def make_row_dict(row_values, col_names, keep_keys_set):
@@ -59,10 +75,11 @@ def make_row_dict(row_values, col_names, keep_keys_set):
     -------
     >>> make_row_dict(['2012', '4', 'AA', '12478', '12892', '-4.00', '0.00', '-21.00', '0.00', '0.00', ''],\
     ['YEAR', 'MONTH', 'UNIQUE_CARRIER', 'ORIGIN_AIRPORT_ID', 'DEST_AIRPORT_ID', 'DEP_DELAY', 'DEP_DELAY_NEW', 'ARR_DELAY', 'ARR_DELAY_NEW', 'CANCELLED', ''],\
-    {'DEST_AIRPORT_ID', 'ORIGIN_AIRPORT_ID', 'DEP_DELAY', 'ARR_DELAY'})
+    {'DEST_AIRPORT_ID', 'ORIGIN_AIRPORT_ID', 'DEP_DELAY', 'ARR_DELAY'}
     {'ARR_DELAY': -17.0, 'DEST_AIRPORT_ID': '12892', 'DEP_DELAY': -4.0, 'ORIGIN_AIRPORT_ID': '12478'}
     """
     pass
+
 
 # Part 3.3.1
 def transformation_pipeline(input_raw_rdd):
@@ -76,10 +93,19 @@ def transformation_pipeline(input_raw_rdd):
     -------
     tuple : answers to questions Q1, Q2, Q3, Q4
     """
+    pass
+
+
 
 if __name__ == "__main__":
-    # we try to create a SparkContext to work locally on all cpus available
-    sc = ps.SparkContext('local[4]')
+    # we try to create a SparkSession to work locally on all cpus available
+    spark = ps.sql.SparkSession.builder \
+            .master("local[4]") \
+            .appName("individual") \
+            .getOrCreate()
+
+    # Grab sparkContext from the SparkSession object
+    sc = spark.sparkContext
     sc.setLogLevel('ERROR')
 
     # obtain the AWS credentials from system
