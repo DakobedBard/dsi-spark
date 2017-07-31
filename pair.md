@@ -42,13 +42,13 @@ conditions:
 
 Now that we have a basic knowledge of how SparkSQL works, let's try dealing with a real-life scenario where some data manipulation/cleaning is required before we can query the data with SparkSQL. We will be using a dataset of user information and a data set of purchases that our users have made. We'll be cleaning the data in a regular Spark RDD before querying it with SparkSQL.
 
-1\. Load a dataframe `users` from S3 link `'s3a://galvanize-ds/users.txt'` (no credentials needed but if you encounter any problem just use local copy `data/users.txt` instead) using `spark.read.csv` with the following parameters: no headers, use separator `";"`, and infer the schema of the underlying data (for now). Use `.show(5)` and `.printSchema()` to check the result.
+1\. Load a dataframe `users` from S3 link `'s3a://galvanize-ds-bak/users.txt'` (no credentials needed but if you encounter any problem just use local copy `data/users.txt` instead) using `spark.read.csv` with the following parameters: no headers, use separator `";"`, and infer the schema of the underlying data (for now). Use `.show(5)` and `.printSchema()` to check the result.
 
 2\. Create a schema for this dataset using proper names and types for the columns, using types from the `pyspark.sql.types` module (see lecture). Use that schema to read the `users` dataframe again and use `.printSchema()` to check the result.
 
 Note: Each row in the `users` file represents the user with his/her `user_id, name, email, phone`.
 
-3\. Load an RDD `transactions_rdd` from S3 link `'s3a://galvanize-ds/transactions.txt'` (no credentials needed but if you encounter any problem just use local copy `data/transactions.txt` instead) using `spark.sparkContext.textFile`. Use `.take(5)` to check the result.
+3\. Load an RDD `transactions_rdd` from S3 link `'s3a://galvanize-ds-bak/transactions.txt'` (no credentials needed but if you encounter any problem just use local copy `data/transactions.txt` instead) using `spark.sparkContext.textFile`. Use `.take(5)` to check the result.
 
 Use `.map()` to split those csv-like lines, to strip the dollar sign on the second column, and to cast each column to its proper type.
 
