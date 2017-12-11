@@ -157,7 +157,7 @@ import os
 ACCESS_KEY = os.environ['AWS_ACCESS_KEY_ID']
 SECRET_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 
-link = 's3n://{}:{}@galvanize-ds/airline-data'.format(ACCESS_KEY, SECRET_KEY)
+link = 's3n://{}:{}@galvanize-ds-bak/airline-data'.format(ACCESS_KEY, SECRET_KEY)
 airline_rdd = sc.textFile(link)
 ```
 
