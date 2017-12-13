@@ -1,6 +1,6 @@
 # Part 0: Initiating a `SparkSession`
 
-1\. Initiate a `SparkSession`. A `SparkSession` initializes both a `SparkContext` and a `SQLContext` to use RDD-based and DataFrame-based functionalities of Spark.
+1\. Initiate a `SparkSession`. A `SparkSession` initializes both a `SparkContext` and a `SQLContext` to use RDD-based and DataFrame-based functionalities of Spark. If you launched a notebook using `bash scripts/jupyspark.sh`, the SparkSession and SparkContext will already be defined as `spark` and `sc`, respectively.
 
 # Part 1: Introduction to SparkSQL
 
