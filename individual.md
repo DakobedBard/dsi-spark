@@ -152,7 +152,7 @@ export AWS_SECRET_ACCESS_KEY=YOUR SECRET ACCESS KEY
 
 ---
 
-**NOTE**: In order to load data from s3, we need to launch our spark session with the `--packages` options for interfacing with aws and hadoop. We've written the following script to do so. To run it, type `bash scripts/jupyspark.sh`
+**NOTE**: In order to load data from s3, we need to launch our spark session with the `--packages` options for interfacing with aws and hadoop. We've written the following bash script to do so. To run it, type `bash scripts/jupyspark.sh` into your terminal.
 
 ```bash
 export PYSPARK_DRIVER_PYTHON=jupyter
@@ -167,7 +167,7 @@ ${SPARK_HOME}/bin/pyspark \
     --packages com.amazonaws:aws-java-sdk-pom:1.10.34 \
     --packages org.apache.hadoop:hadoop-aws:2.7.3
 ```
-Now, whenever you create a notebook, the *spark session* will already be defined in the variable `spark` and the *spark context* will already be defined in `sc`.
+If you use this script to launch a notebook server, then whenever you create a notebook the *spark session* will already be defined in the variable `spark` and the *spark context* will already be defined in `sc`.
 
 
   1\. Load the data from S3 as follows. **Note**: As discussed above, loading won't work if either of your AWS keys contain a slash. Generate a new pair if necessary by following the steps outlined above.
