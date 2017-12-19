@@ -143,7 +143,22 @@ export AWS_SECRET_ACCESS_KEY=YOUR SECRET ACCESS KEY
 ```
 
   Keep in mind that if you ever have to change your keys you'll need to make sure that you
-  update your bash profile.
+  update your bash profile. Also, keep in mind that your environment does not update until
+  you start a new Terminal  or `source .bash_profile`.
+  
+  After you set these variables, `aws configure list` should output something like the following:
+  
+```bash
+$ aws configure list
+      Name                    Value             Type    Location
+      ----                    -----             ----    --------
+   profile                <not set>             None    None
+access_key     ****************YENQ              env    
+secret_key     ****************Nzoe              env    
+    region                us-west-2      config-file    ~/.aws/config
+```
+
+  Note that the `Type` for `access_key` and `secret_key` is `env`. If you see something else in the Type column, or if you don't see the last four characters of the keys in the Value column, the keys are not configured correctly in your environment.
 
   Now you're ready to load up and explore the data all while becoming more familiar with
   Spark.
@@ -155,8 +170,10 @@ export AWS_SECRET_ACCESS_KEY=YOUR SECRET ACCESS KEY
 **NOTE**: In order to load data from s3, we need to launch our spark session with the `--packages` options for interfacing with aws and hadoop. We've written the following bash script to do so. To run it, type `bash scripts/jupyspark.sh` into your terminal.
 
 ```bash
-export PYSPARK_DRIVER_PYTHON=jupyter
-export PYSPARK_DRIVER_PYTHON_OPTS="notebook --NotebookApp.open_browser=True --NotebookApp.ip='localhost' --NotebookApp.port=8888"
+#!/bin/bash
+
+PYSPARK_DRIVER_PYTHON=jupyter
+PYSPARK_DRIVER_PYTHON_OPTS="notebook --NotebookApp.open_browser=True --NotebookApp.ip='localhost' --NotebookApp.port=8888"
 
 ${SPARK_HOME}/bin/pyspark \
     --master local[4] \
@@ -170,16 +187,14 @@ ${SPARK_HOME}/bin/pyspark \
 If you use this script to launch a notebook server, then whenever you create a notebook the *spark session* will already be defined in the variable `spark` and the *spark context* will already be defined in `sc`.
 
 
-  1\. Load the data from S3 as follows. **Note**: As discussed above, loading won't work if either of your AWS keys contain a slash. Generate a new pair if necessary by following the steps outlined above.
+  1\. Load the data from S3 as follows.
 
 ```python
-import os
-ACCESS_KEY = os.environ['AWS_ACCESS_KEY_ID']
-SECRET_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-
-link = 's3a://{}:{}@mortar-example-data/airline-data'.format(ACCESS_KEY, SECRET_KEY)
+link = 's3a://mortar-example-data/airline-data'
 airline_rdd = sc.textFile(link)
 ```
+
+**Warning**: Your AWS keys must be in your environment as `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in order for this to work. The `s3a` client will not look for keys in the `~/.aws/credentials` file. Do not attempt to splice your keys into your URL using string formatting.
 
 **Note**: If you ever encounter an issue using your AWS credentials, and if you want to skip that at this point to save time on the assignment, you'll find an extract of that dataset (100 lines) in `data/airline-data-extract.csv`. You can use this extract to develop your complete pipeline and solve your issue later on. Use `airline_rdd = sc.textFile("data/airline-data-extract.csv")` to transform that extract into an RDD.
 
