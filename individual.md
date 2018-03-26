@@ -167,7 +167,12 @@ secret_key     ****************Nzoe              env
 
 ---
 
-**NOTE**: In order to load data from s3, we need to launch our spark session with the `--packages` options for interfacing with aws and hadoop. We've written the following bash script to do so. To run it, type `bash scripts/jupyspark.sh` into your terminal.
+**NOTE**: In order to load data from s3, we need to launch our spark session with the `--packages` options for interfacing with aws and hadoop. We've written the following bash scripts to do so. 
+
+
+#### Launching a notebook
+
+Type `bash scripts/jupyspark.sh` into your terminal (the contents of `jupyspark.sh` are displayed below). This launches a jupyter notebook server with the required packages.  Now whenever you create a notebook the ***spark session*** will *already be defined* in the variable `spark` and the ***spark context*** will *already be defined* as `sc`.
 
 ```bash
 #!/bin/bash
@@ -185,9 +190,16 @@ ${SPARK_HOME}/bin/pyspark \
     --packages org.apache.hadoop:hadoop-aws:2.7.3
 ```
 
-If you use this script to launch a notebook server, then whenever you create a notebook the ***spark session*** will *already be defined* in the variable `spark` and the ***spark context*** will *already be defined* as `sc`.
+#### Running a python script
+Say you've written all your code in `spark_intro.py`. To run it in the correct spark environment, type 
 
+```bash
+bash scripts/spark_submit_script.sh spark_intro.py
+```
 
+This bash script contains the same commands as `jupyspark.sh`, but uses the `spark-submit` driver instead of launching a notebook server.
+
+#### Either way:
   1\. Load the data from S3 as follows.
 
 ```python
