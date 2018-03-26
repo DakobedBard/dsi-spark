@@ -87,7 +87,7 @@ def transformation_pipeline(input_raw_rdd):
 
     Parameters
     ----------
-    input_raw_rdd (spark RDD): the RDD obtained from 's3n://mortar-example-data/airline-data'
+    input_raw_rdd (spark RDD): the RDD obtained from 's3a://mortar-example-data/airline-data'
 
     Returns
     -------
