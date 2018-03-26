@@ -108,12 +108,8 @@ if __name__ == "__main__":
     sc = spark.sparkContext
     sc.setLogLevel('ERROR')
 
-    # obtain the AWS credentials from system
-    ACCESS_KEY = os.environ['AWS_ACCESS_KEY_ID']
-    SECRET_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-
     # link to the s3 repository from Part 3
-    link = 's3n://{}:{}@mortar-example-data/airline-data'.format(ACCESS_KEY, SECRET_KEY)
+    link = 's3a://mortar-example-data/airline-data'
     airline_rdd = sc.textFile(link)
 
     # launching the full pipeline we have designed in Part 4
