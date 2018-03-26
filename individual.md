@@ -184,7 +184,8 @@ ${SPARK_HOME}/bin/pyspark \
     --packages com.amazonaws:aws-java-sdk-pom:1.10.34 \
     --packages org.apache.hadoop:hadoop-aws:2.7.3
 ```
-If you use this script to launch a notebook server, then whenever you create a notebook the *spark session* will already be defined in the variable `spark` and the *spark context* will already be defined in `sc`.
+
+If you use this script to launch a notebook server, then whenever you create a notebook the ***spark session*** will *already be defined* in the variable `spark` and the ***spark context*** will *already be defined* as `sc`.
 
 
   1\. Load the data from S3 as follows.
