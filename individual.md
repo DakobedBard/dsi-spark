@@ -197,7 +197,7 @@ Say you've written all your code in `spark_intro.py`. To run it in the correct s
 bash scripts/spark_submit_script.sh spark_intro.py
 ```
 
-This bash script contains the same commands as `jupyspark.sh`, but uses the `spark-submit` driver instead of launching a notebook server.
+This bash script contains the same commands as `jupyspark.sh`, but uses the `spark-submit` driver instead of launching a notebook server. In the main block of `spark_intro.py`, we've already written the code that instantiates the `SparkSession` and `SparkContext` objects.
 
 #### Either way:
   1\. Load the data from S3 as follows.
