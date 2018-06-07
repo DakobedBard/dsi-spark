@@ -233,11 +233,11 @@ We want to identify airports with the worst / least delays. Consider the followi
 
 2\. Let's do some preprocessing and parsing. You may have noticed that those rows are in fact csv lines. We are going to parse those lines one by one and output a list of the values we can split from those lines.
 
-In order to do that, you'll find a template function `split_csvstring` in the `spark_intro.py` file. Implement this function that takes a string that contains a csv line, and output the list of values contained in the line. You can use a combination of the `csv` module function `csv.reader()` and the `StringIO` module.
+In order to do that, we've written the function `split_csvstring` in the `spark_intro.py` file employing the `csv` module function `csv.reader()` and the `StringIO` module.
 
 Test it with the string `'a,b,0.7,"Oct 7, 2016",42,'`, your function should return `['a', 'b', '0.7', 'Oct 7, 2016', '42', '']`
 
-Once your function works, use `.map()` to apply it to your RDD. Print the first 2 lines, with `take(2)`, to confirm you've cleaned the rows correctly. The first 2 lines should look like the following.
+Use `.map()` to apply it to your RDD. Print the first 2 lines, with `take(2)`, to confirm the rows have been cleaned correctly. The first 2 lines should look like the following.
 
 ```
 [['YEAR', 'MONTH', 'UNIQUE_CARRIER', 'ORIGIN_AIRPORT_ID', 'DEST_AIRPORT_ID', 'DEP_DELAY', 'DEP_DELAY_NEW', 'ARR_DELAY', 'ARR_DELAY_NEW', 'CANCELLED', ''],
