@@ -10,10 +10,11 @@ across worker nodes).
 ```python
 import pyspark as ps
 
-spark = ps.sql.SparkSession.builder \
-        .master("local[4]") \
-        .appName("df lecture") \
+spark = (ps.sql.SparkSession.builder 
+        .master("local[4]") 
+        .appName("df lecture") 
         .getOrCreate()
+        )
 ```
 
 Create a variable `sc` using the following line. It will let you use `sc` as a `sparkContext` for compatibility with pre-2.0 RDD-based spark commands.
@@ -122,9 +123,11 @@ each cookie only costs $1).
 
 ## Part 3: Spark for Data Processing
 
-  We will now explore airline data. The data are stored on S3 so you will need your AWS access key and secret access key.
+  We will now explore some airline data. The data are stored on S3 so you will need to get two things set up:
+   - put your AWS access key and secret access key in your `.bash_profile`
+   - start a notebook / script using the provided bash scripts to launch spark with the required packages to read data from S3
 
-### Side Note About Personal Credentials
+### 3.0.1: Storing your AWS credentials
 
   It's good practice to keep personal credentials stored in environment variables set in
   your bash profile so that you don't have to hard code their values into your solutions.
@@ -132,19 +135,16 @@ each cookie only costs $1).
   since you don't want to be sharing your access keys with the world. To do this make
   add the lines below to your bash profile.
 
-  Before you do so, check your AWS keys to make sure they don't have a slash in them. If
-  you see a slash in one you can get a new one on AWS. All you have to do is go to "Security Credentials" under your account in the AWS dashboard, then look under the "Access Keys"
-  option. Click `Create New Access Key` and make sure that it doesn't have a slash in it either.
-  Do this until you get slash-free keys. Use those as your environment variables as shown below.
-
 ```bash
 export AWS_ACCESS_KEY_ID=YOUR ACCESS KEY
 export AWS_SECRET_ACCESS_KEY=YOUR SECRET ACCESS KEY
 ```
+  If you lost your access keys or need to generate new ones, go to your AWS console, click your name in the upper right, and click "My Security Credentials" (or click [here](https://console.aws.amazon.com/iam/home?#/security_credential)) and then click "Continue to Security Credentials" if prompted. 
+
 
   Keep in mind that if you ever have to change your keys you'll need to make sure that you
   update your bash profile. Also, keep in mind that your environment does not update until
-  you start a new Terminal  or `source .bash_profile`.
+  you start a new terminal  or type `source ~/.bash_profile`.
   
   After you set these variables, `aws configure list` should output something like the following:
   
@@ -160,14 +160,9 @@ secret_key     ****************Nzoe              env
 
   Note that the `Type` for `access_key` and `secret_key` is `env`. If you see something else in the Type column, or if you don't see the last four characters of the keys in the Value column, the keys are not configured correctly in your environment.
 
-  Now you're ready to load up and explore the data all while becoming more familiar with
-  Spark.
+### 3.0.2 Launching a notebook / script with the required spark packages
 
-  ### 3.1: Loading Data from an S3 bucket
-
----
-
-**NOTE**: In order to load data from s3, we need to launch our spark session with the `--packages` options for interfacing with aws and hadoop. We've written the following bash scripts to do so. 
+Authenticated AWS S3 access is not built in to spark, but it is available with the right packages. We've written the following bash scripts, `jupyspark.sh` and `spark_submit_script.sh`, launch spark with these packages.
 
 
 #### Launching a notebook
@@ -199,7 +194,11 @@ bash scripts/spark_submit_script.sh spark_intro.py
 
 This bash script contains the same commands as `jupyspark.sh`, but uses the `spark-submit` driver instead of launching a notebook server. In the main block of `spark_intro.py`, we've already written the code that instantiates the `SparkSession` and `SparkContext` objects.
 
-#### Either way:
+
+
+Now you're ready to load up and explore the data all while becoming more familiar with Spark.
+
+### 3.1: Loading Data from an S3 bucket
   1\. Load the data from S3 as follows.
 
 ```python
@@ -207,7 +206,7 @@ link = 's3a://mortar-example-data/airline-data'
 airline_rdd = sc.textFile(link)
 ```
 
-**Warning**: Your AWS keys must be in your environment as `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in order for this to work. The `s3a` client will not look for keys in the `~/.aws/credentials` file. Do not attempt to splice your keys into your URL using string formatting.
+**Reminder**: Your AWS keys must be in your environment as `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in order for this to work. The `s3a` client will *not* look for keys in the `~/.aws/credentials` file. Do *not* attempt to splice your keys into your URL using string formatting.
 
 **Note**: If you ever encounter an issue using your AWS credentials, and if you want to skip that at this point to save time on the assignment, you'll find an extract of that dataset (100 lines) in `data/airline-data-extract.csv`. You can use this extract to develop your complete pipeline and solve your issue later on. Use `airline_rdd = sc.textFile("data/airline-data-extract.csv")` to transform that extract into an RDD.
 
