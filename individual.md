@@ -12,7 +12,7 @@ import pyspark as ps
 
 spark = (ps.sql.SparkSession.builder 
         .master("local[4]") 
-        .appName("df lecture") 
+        .appName("morning sprint") 
         .getOrCreate()
         )
 ```
