@@ -2,6 +2,16 @@
 
 1\. Initiate a `SparkSession`. A `SparkSession` initializes both a `SparkContext` and a `SQLContext` to use RDD-based and DataFrame-based functionalities of Spark. If you launched a notebook using `bash scripts/jupyspark.sh`, the SparkSession and SparkContext will already be defined as `spark` and `sc`, respectively.
 
+```
+import pyspark as ps
+spark = (ps.sql.SparkSession.builder 
+        .master("local[4]") 
+        .appName("afternoon sprint") 
+        .getOrCreate()
+        )
+sc = spark.sparkContext
+```
+
 # Part 1: Introduction to SparkSQL
 
 SparkSQL allows you to execute relational queries on **structured** data using
@@ -48,7 +58,7 @@ Now that we have a basic knowledge of how SparkSQL works, let's try dealing with
 
 Note: Each row in the `users` file represents the user with his/her `user_id, name, email, phone`.
 
-3\. Load an RDD `transactions_rdd` from `data/transactions.txt` instead using `spark.sparkContext.textFile`. Use `.take(5)` to check the result.
+3\. Load an RDD `transactions_rdd` from `data/transactions.txt` instead using `sc.textFile`. Use `.take(5)` to check the result.
 
 Use `.map()` to split those csv-like lines, to strip the dollar sign on the second column, and to cast each column to its proper type.
 
