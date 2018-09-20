@@ -22,7 +22,7 @@ then be queried as a SQL table.
 1\. Load the Yelp business data using the function `.read.json()` from the `SparkSession()` object, with input file `data/yelp_academic_dataset_business.json.gz`.
 
 2\. Print the schema and register the `yelp_business_df` as a temporary
-table named `yelp_business` (use the `registerTempTable` method on your dataframe; this will enable us to query the table later using
+table named `yelp_business` (use the `createOrReplaceTempView` method on your dataframe; this will enable us to query the table later using
 our `SparkSession()` object).
 
 Now, you can run SQL queries on the `yelp_business` table. For example:
